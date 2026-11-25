@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새신자 및 방문자 등록 카드</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard & Inter 폰트 로드 (기존 홈페이지 임베드 시 세련된 타이포그래피 제공) -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Pretendard"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50/80 text-slate-800 antialiased min-h-screen py-6 px-4 sm:py-10 lg:py-14">
+
+    <!-- 메인 반응형 컨테이너: 모바일은 콤팩트하게, PC 웹에서는 1024px 와이드 2단 레이아웃으로 확장 -->
+    <div class="max-w-lg lg:max-w-5xl mx-auto">
+        
+        <!-- 알림 메시지 박스 (alert() 대체용 커스텀 배너) -->
+        <div id="feedbackBanner" class="hidden mb-6 p-4 rounded-2xl border text-sm font-medium transition-all duration-300 shadow-sm" role="alert">
+            <div class="flex items-start gap-3">
+                <span id="feedbackIcon" class="mt-0.5 shrink-0"></span>
+                <div class="flex-1">
+                    <p id="feedbackTitle" class="font-bold"></p>
+                    <p id="feedbackMessage" class="mt-0.5 opacity-90"></p>
+                </div>
+                <button type="button" onclick="hideFeedback()" class="text-current opacity-60 hover:opacity-100 p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 통합 등록 폼 카드 (PC에서는 좌/우 12컬럼 그리드 스플릿 구조) -->
+        <form id="registrationForm" novalidate class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/70 overflow-hidden lg:grid lg:grid-cols-12">
+            
+            <!-- [좌측 / 상단 영역] 환영 안내 + 섹션 1: 전도자(인도자) 정보 (PC: 5컬럼) -->
+            <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative overflow-hidden">
+                <!-- 은은한 배경 장식 원형 -->
+                <div class="hidden lg:block absolute -top-24 -left-24 w-64 h-64 rounded-full bg-amber-500/10 blur-2xl pointer-events-none"></div>
+                <div class="hidden lg:block absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-amber-500/10 blur-2xl pointer-events-none"></div>
+
+                <div class="relative z-10">
+                    <!-- 상단 환영 헤더 -->
+                    <div class="mb-7 lg:mb-9">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                            <span>WELCOME & REGISTRATION</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">방문 및 작정 등록</h1>
+                        <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+                            소중한 발걸음을 진심으로 환영하고 축복합니다.<br class="hidden sm:inline">
+                            인도자 정보와 방문자 인적사항을 차례로 입력해 주세요.
+                        </p>
+                    </div>
+
+                    <!-- 섹션 1: 전도자(인도자) 정보 카드 -->
+                    <div class="bg-white/10 backdrop-blur-xs rounded-2xl p-5 sm:p-6 border border-white/15">
+                        <div class="flex items-center gap-2.5 mb-4">
+                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold">1</span>
+                            <div>
+                                <h2 class="text-base font-bold text-white">전도자(인도자) 정보</h2>
+                                <p class="text-xs text-slate-300">함께 오신 분 또는 작정자 정보</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- 모바일 1열 / 태블릿 2열 / PC 좌측패널 내 1열(넉넉한 너비) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
+                                <div>
+                                    <label for="evangelistName" class="block text-xs font-semibold text-slate-200 mb-1.5">
+                                        전도자 이름 <span class="text-amber-400">*</span>
+                                    </label>
+                                    <input type="text" id="evangelistName" name="evangelistName" required placeholder="예: 김은혜"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition text-sm sm:text-base">
+                                </div>
+
+                                <div>
+                                    <label for="evangelistGroup" class="block text-xs font-semibold text-slate-200 mb-1.5">
+                                        소속 (교구/목장/부서) <span class="text-amber-400">*</span>
+                                    </label>
+                                    <input type="text" id="evangelistGroup" name="evangelistGroup" required placeholder="예: 1교구 사랑목장 / 청년부"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition text-sm sm:text-base">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="pledgeDate" class="block text-xs font-semibold text-slate-200 mb-1.5">
+                                    작정일 (등록일) <span class="text-amber-400">*</span>
+                                </label>
+                                <input type="date" id="pledgeDate" name="pledgeDate" required
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-white [color-scheme:dark] focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition text-sm sm:text-base">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PC 화면 하단 안내 문구 -->
+                <div class="hidden lg:flex items-center justify-between pt-6 mt-6 border-t border-white/10 text-xs text-slate-400 relative z-10">
+                    <span>* 모든 필수 항목(*)을 입력해 주세요.</span>
+                    <span>모바일 QR · PC 웹 겸용</span>
+                </div>
+            </div>
+
+            <!-- [우측 / 하단 영역] 섹션 2: 방문자(대상자) 신상 정보 & 제출 (PC: 7컬럼) -->
+            <div class="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-white">
+                <div class="space-y-6">
+                    <!-- 섹션 2 헤더 -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <span class="flex items-center justify-center w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold">2</span>
+                            <div>
+                                <h2 class="text-lg sm:text-xl font-bold text-slate-900">방문자(대상자) 신상 정보</h2>
+                                <p class="text-xs sm:text-sm text-slate-500">등록하시는 분의 기본 인적사항을 정확히 입력해 주세요.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 입력 필드 그룹 1: 방문자 이름 & 성별 (PC/태블릿 2열 나란히 배치) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        <div>
+                            <label for="visitorName" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                                성함 <span class="text-amber-600">*</span>
+                            </label>
+                            <input type="text" id="visitorName" name="visitorName" required placeholder="예: 이믿음"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 transition text-base">
+                        </div>
+
+                        <div>
+                            <span class="block text-sm font-semibold text-slate-700 mb-1.5">
+                                성별 <span class="text-amber-600">*</span>
+                            </span>
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="gender" value="남성" class="peer sr-only" required>
+                                    <div class="w-full py-3 px-3 text-center rounded-xl border border-slate-200 bg-slate-50/60 text-slate-600 font-medium peer-checked:bg-amber-50 peer-checked:border-amber-600 peer-checked:text-amber-800 peer-checked:font-bold transition select-none">
+                                        남성
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="gender" value="여성" class="peer sr-only">
+                                    <div class="w-full py-3 px-3 text-center rounded-xl border border-slate-200 bg-slate-50/60 text-slate-600 font-medium peer-checked:bg-amber-50 peer-checked:border-amber-600 peer-checked:text-amber-800 peer-checked:font-bold transition select-none">
+                                        여성
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 입력 필드 그룹 2: 생년월일 & 연락처 (PC/태블릿 2열 나란히 배치로 스크롤 최소화) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        <div>
+                            <label for="birthDate" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                                생년월일 <span class="text-amber-600">*</span>
+                            </label>
+                            <input type="date" id="birthDate" name="birthDate" required max="2026-12-31"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 transition text-base">
+                        </div>
+
+                        <div>
+                            <label for="phone" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                                연락처 (휴대폰) <span class="text-amber-600">*</span>
+                            </label>
+                            <input type="tel" id="phone" name="phone" required inputmode="numeric" maxlength="13" placeholder="010-0000-0000"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 transition text-base tracking-wide">
+                        </div>
+                    </div>
+
+                    <!-- 개인정보 수집 및 이용 동의 (아코디언 포함) -->
+                    <div class="rounded-2xl bg-slate-50 border border-slate-200/80 p-4">
+                        <div class="flex items-center justify-between gap-2">
+                            <label class="flex items-center gap-3 cursor-pointer select-none flex-1 py-0.5">
+                                <input type="checkbox" id="privacyConsent" name="privacyConsent" required
+                                    class="w-5 h-5 rounded-md border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer accent-amber-600">
+                                <span class="text-sm font-semibold text-slate-800">
+                                    [필수] 개인정보 수집 및 이용에 동의합니다.
+                                </span>
+                            </label>
+                            <button type="button" id="togglePrivacyBtn" aria-expanded="false"
+                                class="text-xs font-medium text-slate-500 hover:text-slate-900 underline underline-offset-2 px-2.5 py-1.5 rounded-lg hover:bg-slate-200/60 transition shrink-0 cursor-pointer">
+                                내용보기
+                            </button>
+                        </div>
+
+                        <!-- 아코디언 상세 내용 -->
+                        <div id="privacyDetails" class="hidden mt-3 pt-3 border-t border-slate-200/80 text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                            <p><strong>1. 수집 목적:</strong> 새신자/방문자 등록 확인, 환영 안내 및 목양/행정 관리</p>
+                            <p><strong>2. 수집 항목:</strong> 전도자 정보(이름, 소속, 작정일), 방문자 정보(이름, 성별, 생년월일, 연락처)</p>
+                            <p><strong>3. 보유 및 이용 기간:</strong> 수집 목적 달성 시 또는 등록 철회 요청 시까지 안전하게 보관 후 파기합니다.</p>
+                            <p class="text-slate-400 pt-1">* 동의를 거부하실 권리가 있으나, 거부 시 등록 접수가 제한될 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하단 제출 버튼 영역 -->
+                <div class="mt-7 pt-2">
+                    <button type="submit" id="submitBtn"
+                        class="w-full py-4 px-6 rounded-2xl bg-amber-600 hover:bg-amber-700 active:scale-[0.99] text-white font-bold text-base sm:text-lg shadow-lg shadow-amber-600/20 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer">
+                        <span id="submitBtnText">등록 완료하기</span>
+                        <svg id="submitSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- 하단 관리자 유틸리티 바: 깔끔한 모달 트리거 버튼 (기존 홈페이지 임베드 시 시야 방해 최소화) -->
+        <div class="mt-5 flex items-center justify-between px-1 text-xs text-slate-400">
+            <span>안전하게 암호화되어 전송됩니다.</span>
+            <button type="button" onclick="openRecordsModal()"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-100 text-slate-600 border border-slate-200/90 shadow-2xs font-medium transition cursor-pointer">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>취합된 명단 관리</span>
+                <span id="recordCountBadge" class="ml-0.5 px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-800 font-bold">0</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- 취합된 명단 관리 모달 (표 조회 및 CSV 다운로드) -->
+    <div id="recordsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- 모달 헤더 -->
+            <div class="p-5 sm:px-6 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">취합된 방문자 명단 (미리보기)</h3>
+                    <span id="modalRecordCountBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800">0건</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="downloadCSV()"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        엑셀(CSV) 다운로드
+                    </button>
+                    <button type="button" onclick="clearRecords()"
+                        class="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-200/60 text-slate-600 text-xs font-medium transition cursor-pointer">
+                        초기화
+                    </button>
+                    <button type="button" onclick="closeRecordsModal()" aria-label="닫기"
+                        class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 모달 본문 (테이블 영역) -->
+            <div class="p-5 sm:p-6 overflow-y-auto flex-1">
+                <div id="emptyState" class="text-center py-12 text-sm text-slate-400">
+                    아직 등록된 내역이 없습니다.<br>등록 폼을 작성하여 제출하면 이곳에 취합 결과가 표시됩니다.
+                </div>
+
+                <div id="tableWrapper" class="hidden overflow-x-auto rounded-2xl border border-slate-200">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-600 font-semibold bg-slate-50">
+                                <th class="py-3 px-4 whitespace-nowrap">작정일</th>
+                                <th class="py-3 px-4 whitespace-nowrap">전도자(소속)</th>
+                                <th class="py-3 px-4 whitespace-nowrap">방문자</th>
+                                <th class="py-3 px-4 whitespace-nowrap">성별</th>
+                                <th class="py-3 px-4 whitespace-nowrap">생년월일</th>
+                                <th class="py-3 px-4 whitespace-nowrap">연락처</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- 자바스크립트로 데이터 행 렌더링 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 등록 완료 축하 모달 -->
+    <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-7 text-center shadow-2xl transform transition-all">
+            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">등록이 완료되었습니다!</h3>
+            <p id="modalSummaryText" class="text-sm text-slate-600 mt-2 leading-relaxed"></p>
+            <button type="button" onclick="closeSuccessModal()"
+                class="mt-6 w-full py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition cursor-pointer">
+                확인
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * 1. 초기 설정 및 Google Apps Script 연동 가이드
+         * ============================================================================
+         * [실제 운영 시 구글 스프레드시트 실시간 취합 방법]
+         * 1) 구글 스프레드시트 상단 메뉴 [확장 프로그램] > [Apps Script] 클릭
+         * 2) 아래 코드를 붙여넣고 [배포] > [새 배포] > 유형: '웹 앱', 액세스 권한: '모든 사용자'로 배포
+         *    function doPost(e) {
+         *      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+         *      var data = JSON.parse(e.postData.contents);
+         *      sheet.appendRow([data.submittedAt, data.pledgeDate, data.evangelistName, data.evangelistGroup, data.visitorName, data.gender, data.birthDate, data.phone, data.privacyAgreed]);
+         *      return ContentService.createTextOutput(JSON.stringify({result: 'success'})).setMimeType(ContentService.MimeType.JSON);
+         *    }
+         * 3) 발급받은 웹 앱 URL을 아래 GOOGLE_APPS_SCRIPT_URL 변수에 입력합니다.
+         */
+        const GOOGLE_APPS_SCRIPT_URL = ''; // 예: 'https://script.google.com/macros/s/AKfycbx.../exec'
+        const STORAGE_KEY = 'visitor_registration_records_v1';
+        let registeredRecords = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTodayDate();
+            loadStoredRecords();
+            setupPhoneFormatter();
+            setupPrivacyAccordion();
+            setupFormSubmission();
+        });
+
+        // 2. 작정일(등록일)을 오늘 날짜(로컬 기준)로 자동 설정
+        function setTodayDate() {
+            const pledgeDateInput = document.getElementById('pledgeDate');
+            if (!pledgeDateInput) return;
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            pledgeDateInput.value = `${year}-${month}-${day}`;
+        }
+
+        // 3. 휴대폰 번호 입력 시 자동 하이픈(010-0000-0000) 포맷팅
+        function setupPhoneFormatter() {
+            const phoneInput = document.getElementById('phone');
+            if (!phoneInput) return;
+            phoneInput.addEventListener('input', (e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+                if (digits.length <= 3) {
+                    e.target.value = digits;
+                } else if (digits.length <= 7) {
+                    e.target.value = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+                } else {
+                    e.target.value = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+                }
+            });
+        }
+
+        // 4. 개인정보 수집 동의 상세 내용 토글 아코디언
+        function setupPrivacyAccordion() {
+            const toggleBtn = document.getElementById('togglePrivacyBtn');
+            const detailsBox = document.getElementById('privacyDetails');
+            if (!toggleBtn || !detailsBox) return;
+
+            toggleBtn.addEventListener('click', () => {
+                const isHidden = detailsBox.classList.contains('hidden');
+                if (isHidden) {
+                    detailsBox.classList.remove('hidden');
+                    toggleBtn.setAttribute('aria-expanded', 'true');
+                    toggleBtn.textContent = '접기';
+                } else {
+                    detailsBox.classList.add('hidden');
+                    toggleBtn.setAttribute('aria-expanded', 'false');
+                    toggleBtn.textContent = '내용보기';
+                }
+            });
+        }
+
+        // 5. 커스텀 알림 배너 제어 (alert 대체)
+        function showFeedback(type, title, message) {
+            const banner = document.getElementById('feedbackBanner');
+            const icon = document.getElementById('feedbackIcon');
+            const titleEl = document.getElementById('feedbackTitle');
+            const msgEl = document.getElementById('feedbackMessage');
+
+            banner.className = 'mb-6 p-4 rounded-2xl border text-sm font-medium transition-all duration-300 shadow-sm';
+            if (type === 'error') {
+                banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                icon.innerHTML = '<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            } else {
+                banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                icon.innerHTML = '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            }
+
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+            banner.classList.remove('hidden');
+            banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function hideFeedback() {
+            const banner = document.getElementById('feedbackBanner');
+            if (banner) banner.classList.add('hidden');
+        }
+
+        // 6. 폼 유효성 검사 및 제출 처리
+        function setupFormSubmission() {
+            const form = document.getElementById('registrationForm');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hideFeedback();
+
+                const evangelistName = document.getElementById('evangelistName').value.trim();
+                const evangelistGroup = document.getElementById('evangelistGroup').value.trim();
+                const pledgeDate = document.getElementById('pledgeDate').value;
+                const visitorName = document.getElementById('visitorName').value.trim();
+                const genderEl = document.querySelector('input[name="gender"]:checked');
+                const gender = genderEl ? genderEl.value : '';
+                const birthDate = document.getElementById('birthDate').value;
+                const phone = document.getElementById('phone').value.trim();
+                const privacyConsent = document.getElementById('privacyConsent').checked;
+
+                if (!evangelistName) {
+                    showFeedback('error', '입력 확인 필요', '전도자(인도자) 이름을 입력해 주세요.');
+                    document.getElementById('evangelistName').focus();
+                    return;
+                }
+                if (!evangelistGroup) {
+                    showFeedback('error', '입력 확인 필요', '전도자 소속(교구/목장/부서)을 입력해 주세요.');
+                    document.getElementById('evangelistGroup').focus();
+                    return;
+                }
+                if (!pledgeDate) {
+                    showFeedback('error', '입력 확인 필요', '작정일을 선택해 주세요.');
+                    document.getElementById('pledgeDate').focus();
+                    return;
+                }
+                if (!visitorName) {
+                    showFeedback('error', '입력 확인 필요', '방문자 성함을 입력해 주세요.');
+                    document.getElementById('visitorName').focus();
+                    return;
+                }
+                if (!gender) {
+                    showFeedback('error', '입력 확인 필요', '방문자 성별을 선택해 주세요.');
+                    return;
+                }
+                if (!birthDate) {
+                    showFeedback('error', '입력 확인 필요', '방문자 생년월일을 선택해 주세요.');
+                    document.getElementById('birthDate').focus();
+                    return;
+                }
+                const phoneDigits = phone.replace(/\D/g, '');
+                if (phoneDigits.length < 10) {
+                    showFeedback('error', '연락처 형식 오류', '올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+                    document.getElementById('phone').focus();
+                    return;
+                }
+                if (!privacyConsent) {
+                    showFeedback('error', '동의 확인 필요', '[필수] 개인정보 수집 및 이용에 동의해 주세요.');
+                    document.getElementById('privacyConsent').focus();
+                    return;
+                }
+
+                const submitBtn = document.getElementById('submitBtn');
+                const submitBtnText = document.getElementById('submitBtnText');
+                const submitSpinner = document.getElementById('submitSpinner');
+                submitBtn.disabled = true;
+                submitBtnText.textContent = '등록 처리 중...';
+                submitSpinner.classList.remove('hidden');
+
+                const record = {
+                    id: Date.now(),
+                    submittedAt: new Date().toLocaleString('ko-KR'),
+                    evangelistName,
+                    evangelistGroup,
+                    pledgeDate,
+                    visitorName,
+                    gender,
+                    birthDate,
+                    phone,
+                    privacyAgreed: '동의함'
+                };
+
+                try {
+                    if (GOOGLE_APPS_SCRIPT_URL) {
+                        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(record)
+                        });
+                    }
+
+                    saveRecordLocally(record);
+                    openSuccessModal(record);
+
+                    form.reset();
+                    setTodayDate();
+                } catch (error) {
+                    console.error('등록 전송 오류:', error);
+                    showFeedback('error', '전송 오류', '등록 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtnText.textContent = '등록 완료하기';
+                    submitSpinner.classList.add('hidden');
+                }
+            });
+        }
+
+        // 7. 로컬 스토리지 저장 및 조회
+        function loadStoredRecords() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                registeredRecords = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                registeredRecords = [];
+            }
+            renderRecordsTable();
+        }
+
+        function saveRecordLocally(record) {
+            registeredRecords.unshift(record);
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(registeredRecords));
+            } catch (e) {
+                console.warn('로컬 스토리지 저장 실패:', e);
+            }
+            renderRecordsTable();
+        }
+
+        function clearRecords() {
+            if (registeredRecords.length === 0) return;
+            registeredRecords = [];
+            localStorage.removeItem(STORAGE_KEY);
+            renderRecordsTable();
+            showFeedback('success', '초기화 완료', '임시 저장된 테스트 명단이 모두 비워졌습니다.');
+        }
+
+        // 8. 엑셀(CSV) 파일 다운로드
+        function downloadCSV() {
+            if (registeredRecords.length === 0) {
+                closeRecordsModal();
+                showFeedback('error', '데이터 없음', '다운로드할 등록 데이터가 없습니다.');
+                return;
+            }
+
+            const headers = ['접수일시', '작정일', '전도자이름', '전도자소속', '방문자이름', '성별', '생년월일', '연락처', '개인정보동의'];
+            const rows = registeredRecords.map(r => [
+                r.submittedAt,
+                r.pledgeDate,
+                r.evangelistName,
+                r.evangelistGroup,
+                r.visitorName,
+                r.gender,
+                r.birthDate,
+                r.phone,
+                r.privacyAgreed
+            ].map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(','));
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            const todayStr = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.setAttribute('download', `방문자등록명단_${todayStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // 9. XSS 방지용 HTML 이스케이프 헬퍼 및 모달 제어
+        function escapeHTML(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function openSuccessModal(record) {
+            const modal = document.getElementById('successModal');
+            const summary = document.getElementById('modalSummaryText');
+            summary.innerHTML = `
+                <strong class="text-slate-900">${escapeHTML(record.visitorName)}</strong>님의 방문 등록이 정상적으로 접수되었습니다.<br>
+                <span class="text-xs text-slate-400 mt-1 inline-block">(전도자: ${escapeHTML(record.evangelistName)} / ${escapeHTML(record.evangelistGroup)})</span>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        function openRecordsModal() {
+            renderRecordsTable();
+            document.getElementById('recordsModal').classList.remove('hidden');
+        }
+
+        function closeRecordsModal() {
+            document.getElementById('recordsModal').classList.add('hidden');
+        }
+// ... existing code ... -->
+        function renderRecordsTable() {
+            const countBadge = document.getElementById('recordCountBadge');
+            const modalCountBadge = document.getElementById('modalRecordCountBadge');
+            const emptyState = document.getElementById('emptyState');
+            const tableWrapper = document.getElementById('tableWrapper');
+            const tbody = document.getElementById('recordsTableBody');
+
+            countBadge.textContent = `${registeredRecords.length}`;
+            if (modalCountBadge) {
+                modalCountBadge.textContent = `${registeredRecords.length}건`;
+            }
+
+            if (registeredRecords.length === 0) {
+                emptyState.classList.remove('hidden');
+                tableWrapper.classList.add('hidden');
+                tbody.innerHTML = '';
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tableWrapper.classList.remove('hidden');
+
+            tbody.innerHTML = registeredRecords.map(item => `
+                <tr class="hover:bg-amber-50/40 transition">
+                    <td class="py-3 px-4 whitespace-nowrap text-slate-500">${escapeHTML(item.pledgeDate)}</td>
+                    <td class="py-3 px-4 whitespace-nowrap">
+                        <span class="font-medium text-slate-800">${escapeHTML(item.evangelistName)}</span>
+                        <span class="text-xs text-slate-400">(${escapeHTML(item.evangelistGroup)})</span>
+                    </td>
+                    <td class="py-3 px-4 whitespace-nowrap font-bold text-amber-800">${escapeHTML(item.visitorName)}</td>
+                    <td class="py-3 px-4 whitespace-nowrap">${escapeHTML(item.gender)}</td>
+                    <td class="py-3 px-4 whitespace-nowrap">${escapeHTML(item.birthDate)}</td>
+                    <td class="py-3 px-4 whitespace-nowrap font-mono text-xs">${escapeHTML(item.phone)}</td>
+                </tr>
+            `).join('');
+        }
+// ... existing code ... -->
