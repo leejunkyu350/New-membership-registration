@@ -47,7 +47,7 @@
                     <p id="feedbackTitle" class="font-bold"></p>
                     <p id="feedbackMessage" class="mt-0.5 opacity-90"></p>
                 </div>
-                <button type="button" onclick="hideFeedback()" class="text-current opacity-60 hover:opacity-100 p-1">
+                <button type="button" id="closeFeedbackBtn" class="text-current opacity-60 hover:opacity-100 p-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -233,7 +233,7 @@
         <!-- 하단 관리자 유틸리티 바: 깔끔한 모달 트리거 버튼 (기존 홈페이지 임베드 시 시야 방해 최소화) -->
         <div class="mt-5 flex items-center justify-between px-1 text-xs text-slate-400">
             <span>안전하게 암호화되어 전송됩니다.</span>
-            <button type="button" onclick="openRecordsModal()"
+            <button type="button" id="openRecordsBtn"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-100 text-slate-600 border border-slate-200/90 shadow-2xs font-medium transition cursor-pointer">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                 <span>취합된 명단 관리</span>
@@ -254,16 +254,16 @@
                     <span id="modalRecordCountBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800">0건</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="downloadCSV()"
+                    <button type="button" id="downloadCsvBtn"
                         class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         엑셀(CSV) 다운로드
                     </button>
-                    <button type="button" onclick="clearRecords()"
+                    <button type="button" id="clearRecordsBtn"
                         class="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-200/60 text-slate-600 text-xs font-medium transition cursor-pointer">
                         초기화
                     </button>
-                    <button type="button" onclick="closeRecordsModal()" aria-label="닫기"
+                    <button type="button" id="closeRecordsBtn" aria-label="닫기"
                         class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
@@ -305,7 +305,7 @@
             </div>
             <h3 class="text-xl font-bold text-slate-900">등록이 완료되었습니다!</h3>
             <p id="modalSummaryText" class="text-sm text-slate-600 mt-2 leading-relaxed"></p>
-            <button type="button" onclick="closeSuccessModal()"
+            <button type="button" id="closeSuccessBtn"
                 class="mt-6 w-full py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition cursor-pointer">
                 확인
             </button>
@@ -313,344 +313,372 @@
     </div>
 
     <script>
-        /**
-         * ============================================================================
-         * 1. 초기 설정 및 Google Apps Script 연동 가이드
-         * ============================================================================
-         * [실제 운영 시 구글 스프레드시트 실시간 취합 방법]
-         * 1) 구글 스프레드시트 상단 메뉴 [확장 프로그램] > [Apps Script] 클릭
-         * 2) 아래 코드를 붙여넣고 [배포] > [새 배포] > 유형: '웹 앱', 액세스 권한: '모든 사용자'로 배포
-         *    function doPost(e) {
-         *      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-         *      var data = JSON.parse(e.postData.contents);
-         *      sheet.appendRow([data.submittedAt, data.pledgeDate, data.evangelistName, data.evangelistGroup, data.visitorName, data.gender, data.birthDate, data.phone, data.privacyAgreed]);
-         *      return ContentService.createTextOutput(JSON.stringify({result: 'success'})).setMimeType(ContentService.MimeType.JSON);
-         *    }
-         * 3) 발급받은 웹 앱 URL을 아래 GOOGLE_APPS_SCRIPT_URL 변수에 입력합니다.
-         */
-        const GOOGLE_APPS_SCRIPT_URL = ''; // 예: 'https://script.google.com/macros/s/AKfycbx.../exec'
-        const STORAGE_KEY = 'visitor_registration_records_v1';
-        let registeredRecords = [];
+        (function() {
+            /**
+             * ============================================================================
+             * 1. 초기 설정 및 Google Apps Script 연동 가이드
+             * ============================================================================
+             */
+            const GOOGLE_APPS_SCRIPT_URL = ''; // 예: 'https://script.google.com/macros/s/AKfycbx.../exec'
+            const STORAGE_KEY = 'visitor_registration_records_v1';
+            let registeredRecords = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setTodayDate();
-            loadStoredRecords();
-            setupPhoneFormatter();
-            setupPrivacyAccordion();
-            setupFormSubmission();
-        });
-
-        // 2. 작정일(등록일)을 오늘 날짜(로컬 기준)로 자동 설정
-        function setTodayDate() {
-            const pledgeDateInput = document.getElementById('pledgeDate');
-            if (!pledgeDateInput) return;
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            pledgeDateInput.value = `${year}-${month}-${day}`;
-        }
-
-        // 3. 휴대폰 번호 입력 시 자동 하이픈(010-0000-0000) 포맷팅
-        function setupPhoneFormatter() {
-            const phoneInput = document.getElementById('phone');
-            if (!phoneInput) return;
-            phoneInput.addEventListener('input', (e) => {
-                const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-                if (digits.length <= 3) {
-                    e.target.value = digits;
-                } else if (digits.length <= 7) {
-                    e.target.value = `${digits.slice(0, 3)}-${digits.slice(3)}`;
-                } else {
-                    e.target.value = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-                }
-            });
-        }
-
-        // 4. 개인정보 수집 동의 상세 내용 토글 아코디언
-        function setupPrivacyAccordion() {
-            const toggleBtn = document.getElementById('togglePrivacyBtn');
-            const detailsBox = document.getElementById('privacyDetails');
-            if (!toggleBtn || !detailsBox) return;
-
-            toggleBtn.addEventListener('click', () => {
-                const isHidden = detailsBox.classList.contains('hidden');
-                if (isHidden) {
-                    detailsBox.classList.remove('hidden');
-                    toggleBtn.setAttribute('aria-expanded', 'true');
-                    toggleBtn.textContent = '접기';
-                } else {
-                    detailsBox.classList.add('hidden');
-                    toggleBtn.setAttribute('aria-expanded', 'false');
-                    toggleBtn.textContent = '내용보기';
-                }
-            });
-        }
-
-        // 5. 커스텀 알림 배너 제어 (alert 대체)
-        function showFeedback(type, title, message) {
-            const banner = document.getElementById('feedbackBanner');
-            const icon = document.getElementById('feedbackIcon');
-            const titleEl = document.getElementById('feedbackTitle');
-            const msgEl = document.getElementById('feedbackMessage');
-
-            banner.className = 'mb-6 p-4 rounded-2xl border text-sm font-medium transition-all duration-300 shadow-sm';
-            if (type === 'error') {
-                banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
-                icon.innerHTML = '<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-            } else {
-                banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
-                icon.innerHTML = '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            // 안전한 초기화 실행 (DOM이 이미 로드되었거나 아직 로딩 중일 때 모두 대응)
+            function initApp() {
+                setTodayDate();
+                loadStoredRecords();
+                setupPhoneFormatter();
+                setupPrivacyAccordion();
+                setupFormSubmission();
+                setupButtonEvents();
             }
 
-            titleEl.textContent = title;
-            msgEl.textContent = message;
-            banner.classList.remove('hidden');
-            banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initApp);
+            } else {
+                initApp();
+            }
 
-        function hideFeedback() {
-            const banner = document.getElementById('feedbackBanner');
-            if (banner) banner.classList.add('hidden');
-        }
+            // 버튼 이벤트 일괄 연결 (인라인 onclick 차단 정책/CSP 환경 대응)
+            function setupButtonEvents() {
+                const closeFeedbackBtn = document.getElementById('closeFeedbackBtn');
+                const openRecordsBtn = document.getElementById('openRecordsBtn');
+                const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+                const clearRecordsBtn = document.getElementById('clearRecordsBtn');
+                const closeRecordsBtn = document.getElementById('closeRecordsBtn');
+                const closeSuccessBtn = document.getElementById('closeSuccessBtn');
 
-        // 6. 폼 유효성 검사 및 제출 처리
-        function setupFormSubmission() {
-            const form = document.getElementById('registrationForm');
-            if (!form) return;
+                if (closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', hideFeedback);
+                if (openRecordsBtn) openRecordsBtn.addEventListener('click', openRecordsModal);
+                if (downloadCsvBtn) downloadCsvBtn.addEventListener('click', downloadCSV);
+                if (clearRecordsBtn) clearRecordsBtn.addEventListener('click', clearRecords);
+                if (closeRecordsBtn) closeRecordsBtn.addEventListener('click', closeRecordsModal);
+                if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeSuccessModal);
+            }
 
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                hideFeedback();
+            // 2. 작정일(등록일)을 오늘 날짜(로컬 기준)로 자동 설정
+            function setTodayDate() {
+                const pledgeDateInput = document.getElementById('pledgeDate');
+                if (!pledgeDateInput) return;
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                pledgeDateInput.value = `${year}-${month}-${day}`;
+            }
 
-                const evangelistName = document.getElementById('evangelistName').value.trim();
-                const evangelistGroup = document.getElementById('evangelistGroup').value.trim();
-                const pledgeDate = document.getElementById('pledgeDate').value;
-                const visitorName = document.getElementById('visitorName').value.trim();
-                const genderEl = document.querySelector('input[name="gender"]:checked');
-                const gender = genderEl ? genderEl.value : '';
-                const birthDate = document.getElementById('birthDate').value;
-                const phone = document.getElementById('phone').value.trim();
-                const privacyConsent = document.getElementById('privacyConsent').checked;
+            // 3. 휴대폰 번호 입력 시 자동 하이픈(010-0000-0000) 포맷팅
+            function setupPhoneFormatter() {
+                const phoneInput = document.getElementById('phone');
+                if (!phoneInput) return;
+                phoneInput.addEventListener('input', (e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    if (digits.length <= 3) {
+                        e.target.value = digits;
+                    } else if (digits.length <= 7) {
+                        e.target.value = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+                    } else {
+                        e.target.value = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+                    }
+                });
+            }
 
-                if (!evangelistName) {
-                    showFeedback('error', '입력 확인 필요', '전도자(인도자) 이름을 입력해 주세요.');
-                    document.getElementById('evangelistName').focus();
-                    return;
-                }
-                if (!evangelistGroup) {
-                    showFeedback('error', '입력 확인 필요', '전도자 소속(교구/목장/부서)을 입력해 주세요.');
-                    document.getElementById('evangelistGroup').focus();
-                    return;
-                }
-                if (!pledgeDate) {
-                    showFeedback('error', '입력 확인 필요', '작정일을 선택해 주세요.');
-                    document.getElementById('pledgeDate').focus();
-                    return;
-                }
-                if (!visitorName) {
-                    showFeedback('error', '입력 확인 필요', '방문자 성함을 입력해 주세요.');
-                    document.getElementById('visitorName').focus();
-                    return;
-                }
-                if (!gender) {
-                    showFeedback('error', '입력 확인 필요', '방문자 성별을 선택해 주세요.');
-                    return;
-                }
-                if (!birthDate) {
-                    showFeedback('error', '입력 확인 필요', '방문자 생년월일을 선택해 주세요.');
-                    document.getElementById('birthDate').focus();
-                    return;
-                }
-                const phoneDigits = phone.replace(/\D/g, '');
-                if (phoneDigits.length < 10) {
-                    showFeedback('error', '연락처 형식 오류', '올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
-                    document.getElementById('phone').focus();
-                    return;
-                }
-                if (!privacyConsent) {
-                    showFeedback('error', '동의 확인 필요', '[필수] 개인정보 수집 및 이용에 동의해 주세요.');
-                    document.getElementById('privacyConsent').focus();
-                    return;
+            // 4. 개인정보 수집 동의 상세 내용 토글 아코디언
+            function setupPrivacyAccordion() {
+                const toggleBtn = document.getElementById('togglePrivacyBtn');
+                const detailsBox = document.getElementById('privacyDetails');
+                if (!toggleBtn || !detailsBox) return;
+
+                toggleBtn.addEventListener('click', () => {
+                    const isHidden = detailsBox.classList.contains('hidden');
+                    if (isHidden) {
+                        detailsBox.classList.remove('hidden');
+                        toggleBtn.setAttribute('aria-expanded', 'true');
+                        toggleBtn.textContent = '접기';
+                    } else {
+                        detailsBox.classList.add('hidden');
+                        toggleBtn.setAttribute('aria-expanded', 'false');
+                        toggleBtn.textContent = '내용보기';
+                    }
+                });
+            }
+
+            // 5. 커스텀 알림 배너 제어
+            function showFeedback(type, title, message) {
+                const banner = document.getElementById('feedbackBanner');
+                const icon = document.getElementById('feedbackIcon');
+                const titleEl = document.getElementById('feedbackTitle');
+                const msgEl = document.getElementById('feedbackMessage');
+                if (!banner) return;
+
+                banner.className = 'mb-6 p-4 rounded-2xl border text-sm font-medium transition-all duration-300 shadow-sm';
+                if (type === 'error') {
+                    banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                    icon.innerHTML = '<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                } else {
+                    banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                    icon.innerHTML = '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
                 }
 
-                const submitBtn = document.getElementById('submitBtn');
-                const submitBtnText = document.getElementById('submitBtnText');
-                const submitSpinner = document.getElementById('submitSpinner');
-                submitBtn.disabled = true;
-                submitBtnText.textContent = '등록 처리 중...';
-                submitSpinner.classList.remove('hidden');
+                titleEl.textContent = title;
+                msgEl.textContent = message;
+                banner.classList.remove('hidden');
+                banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
 
-                const record = {
-                    id: Date.now(),
-                    submittedAt: new Date().toLocaleString('ko-KR'),
-                    evangelistName,
-                    evangelistGroup,
-                    pledgeDate,
-                    visitorName,
-                    gender,
-                    birthDate,
-                    phone,
-                    privacyAgreed: '동의함'
-                };
+            function hideFeedback() {
+                const banner = document.getElementById('feedbackBanner');
+                if (banner) banner.classList.add('hidden');
+            }
 
-                try {
-                    if (GOOGLE_APPS_SCRIPT_URL) {
-                        await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                            method: 'POST',
-                            mode: 'no-cors',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(record)
-                        });
+            // 6. 폼 유효성 검사 및 제출 처리
+            function setupFormSubmission() {
+                const form = document.getElementById('registrationForm');
+                if (!form) return;
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    hideFeedback();
+
+                    const evangelistName = document.getElementById('evangelistName').value.trim();
+                    const evangelistGroup = document.getElementById('evangelistGroup').value.trim();
+                    const pledgeDate = document.getElementById('pledgeDate').value;
+                    const visitorName = document.getElementById('visitorName').value.trim();
+                    const genderEl = document.querySelector('input[name="gender"]:checked');
+                    const gender = genderEl ? genderEl.value : '';
+                    const birthDate = document.getElementById('birthDate').value;
+                    const phone = document.getElementById('phone').value.trim();
+                    const privacyConsent = document.getElementById('privacyConsent').checked;
+
+                    if (!evangelistName) {
+                        showFeedback('error', '입력 확인 필요', '전도자(인도자) 이름을 입력해 주세요.');
+                        document.getElementById('evangelistName').focus();
+                        return;
+                    }
+                    if (!evangelistGroup) {
+                        showFeedback('error', '입력 확인 필요', '전도자 소속(교구/목장/부서)을 입력해 주세요.');
+                        document.getElementById('evangelistGroup').focus();
+                        return;
+                    }
+                    if (!pledgeDate) {
+                        showFeedback('error', '입력 확인 필요', '작정일을 선택해 주세요.');
+                        document.getElementById('pledgeDate').focus();
+                        return;
+                    }
+                    if (!visitorName) {
+                        showFeedback('error', '입력 확인 필요', '방문자 성함을 입력해 주세요.');
+                        document.getElementById('visitorName').focus();
+                        return;
+                    }
+                    if (!gender) {
+                        showFeedback('error', '입력 확인 필요', '방문자 성별을 선택해 주세요.');
+                        return;
+                    }
+                    if (!birthDate) {
+                        showFeedback('error', '입력 확인 필요', '방문자 생년월일을 선택해 주세요.');
+                        document.getElementById('birthDate').focus();
+                        return;
+                    }
+                    const phoneDigits = phone.replace(/\D/g, '');
+                    if (phoneDigits.length < 10) {
+                        showFeedback('error', '연락처 형식 오류', '올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+                        document.getElementById('phone').focus();
+                        return;
+                    }
+                    if (!privacyConsent) {
+                        showFeedback('error', '동의 확인 필요', '[필수] 개인정보 수집 및 이용에 동의해 주세요.');
+                        document.getElementById('privacyConsent').focus();
+                        return;
                     }
 
-                    saveRecordLocally(record);
-                    openSuccessModal(record);
+                    const submitBtn = document.getElementById('submitBtn');
+                    const submitBtnText = document.getElementById('submitBtnText');
+                    const submitSpinner = document.getElementById('submitSpinner');
+                    submitBtn.disabled = true;
+                    submitBtnText.textContent = '등록 처리 중...';
+                    submitSpinner.classList.remove('hidden');
 
-                    form.reset();
-                    setTodayDate();
-                } catch (error) {
-                    console.error('등록 전송 오류:', error);
-                    showFeedback('error', '전송 오류', '등록 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtnText.textContent = '등록 완료하기';
-                    submitSpinner.classList.add('hidden');
+                    const record = {
+                        id: Date.now(),
+                        submittedAt: new Date().toLocaleString('ko-KR'),
+                        evangelistName,
+                        evangelistGroup,
+                        pledgeDate,
+                        visitorName,
+                        gender,
+                        birthDate,
+                        phone,
+                        privacyAgreed: '동의함'
+                    };
+
+                    try {
+                        if (GOOGLE_APPS_SCRIPT_URL) {
+                            await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                                method: 'POST',
+                                mode: 'no-cors',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(record)
+                            });
+                        }
+
+                        saveRecordLocally(record);
+                        openSuccessModal(record);
+
+                        form.reset();
+                        setTodayDate();
+                    } catch (error) {
+                        console.error('등록 전송 오류:', error);
+                        showFeedback('error', '전송 오류', '등록 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtnText.textContent = '등록 완료하기';
+                        submitSpinner.classList.add('hidden');
+                    }
+                });
+            }
+
+            // 7. 로컬 스토리지 저장 및 조회 (로컬 파일 file:// 환경 예외 처리 포함)
+            function loadStoredRecords() {
+                try {
+                    const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
+                    registeredRecords = raw ? JSON.parse(raw) : [];
+                } catch (e) {
+                    registeredRecords = [];
                 }
-            });
-        }
+                renderRecordsTable();
+            }
 
-        // 7. 로컬 스토리지 저장 및 조회
-        function loadStoredRecords() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                registeredRecords = raw ? JSON.parse(raw) : [];
-            } catch (e) {
+            function saveRecordLocally(record) {
+                registeredRecords.unshift(record);
+                try {
+                    if (window.localStorage) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(registeredRecords));
+                    }
+                } catch (e) {
+                    console.warn('로컬 스토리지 저장 제한 환경:', e);
+                }
+                renderRecordsTable();
+            }
+
+            function clearRecords() {
+                if (registeredRecords.length === 0) return;
                 registeredRecords = [];
-            }
-            renderRecordsTable();
-        }
-
-        function saveRecordLocally(record) {
-            registeredRecords.unshift(record);
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(registeredRecords));
-            } catch (e) {
-                console.warn('로컬 스토리지 저장 실패:', e);
-            }
-            renderRecordsTable();
-        }
-
-        function clearRecords() {
-            if (registeredRecords.length === 0) return;
-            registeredRecords = [];
-            localStorage.removeItem(STORAGE_KEY);
-            renderRecordsTable();
-            showFeedback('success', '초기화 완료', '임시 저장된 테스트 명단이 모두 비워졌습니다.');
-        }
-
-        // 8. 엑셀(CSV) 파일 다운로드
-        function downloadCSV() {
-            if (registeredRecords.length === 0) {
-                closeRecordsModal();
-                showFeedback('error', '데이터 없음', '다운로드할 등록 데이터가 없습니다.');
-                return;
+                try {
+                    if (window.localStorage) localStorage.removeItem(STORAGE_KEY);
+                } catch (e) {}
+                renderRecordsTable();
+                showFeedback('success', '초기화 완료', '임시 저장된 테스트 명단이 모두 비워졌습니다.');
             }
 
-            const headers = ['접수일시', '작정일', '전도자이름', '전도자소속', '방문자이름', '성별', '생년월일', '연락처', '개인정보동의'];
-            const rows = registeredRecords.map(r => [
-                r.submittedAt,
-                r.pledgeDate,
-                r.evangelistName,
-                r.evangelistGroup,
-                r.visitorName,
-                r.gender,
-                r.birthDate,
-                r.phone,
-                r.privacyAgreed
-            ].map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(','));
+            // 8. 엑셀(CSV) 파일 다운로드
+            function downloadCSV() {
+                if (registeredRecords.length === 0) {
+                    closeRecordsModal();
+                    showFeedback('error', '데이터 없음', '다운로드할 등록 데이터가 없습니다.');
+                    return;
+                }
 
-            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+                const headers = ['접수일시', '작정일', '전도자이름', '전도자소속', '방문자이름', '성별', '생년월일', '연락처', '개인정보동의'];
+                const rows = registeredRecords.map(r => [
+                    r.submittedAt,
+                    r.pledgeDate,
+                    r.evangelistName,
+                    r.evangelistGroup,
+                    r.visitorName,
+                    r.gender,
+                    r.birthDate,
+                    r.phone,
+                    r.privacyAgreed
+                ].map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(','));
 
-            const link = document.createElement('a');
-            const todayStr = new Date().toISOString().slice(0, 10);
-            link.href = url;
-            link.setAttribute('download', `방문자등록명단_${todayStr}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
+                const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
 
-        // 9. XSS 방지용 HTML 이스케이프 헬퍼 및 모달 제어
-        function escapeHTML(str) {
-            return String(str || '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-
-        function openSuccessModal(record) {
-            const modal = document.getElementById('successModal');
-            const summary = document.getElementById('modalSummaryText');
-            summary.innerHTML = `
-                <strong class="text-slate-900">${escapeHTML(record.visitorName)}</strong>님의 방문 등록이 정상적으로 접수되었습니다.<br>
-                <span class="text-xs text-slate-400 mt-1 inline-block">(전도자: ${escapeHTML(record.evangelistName)} / ${escapeHTML(record.evangelistGroup)})</span>
-            `;
-            modal.classList.remove('hidden');
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
-
-        function openRecordsModal() {
-            renderRecordsTable();
-            document.getElementById('recordsModal').classList.remove('hidden');
-        }
-
-        function closeRecordsModal() {
-            document.getElementById('recordsModal').classList.add('hidden');
-        }
-// ... existing code ... -->
-        function renderRecordsTable() {
-            const countBadge = document.getElementById('recordCountBadge');
-            const modalCountBadge = document.getElementById('modalRecordCountBadge');
-            const emptyState = document.getElementById('emptyState');
-            const tableWrapper = document.getElementById('tableWrapper');
-            const tbody = document.getElementById('recordsTableBody');
-
-            countBadge.textContent = `${registeredRecords.length}`;
-            if (modalCountBadge) {
-                modalCountBadge.textContent = `${registeredRecords.length}건`;
+                const link = document.createElement('a');
+                const todayStr = new Date().toISOString().slice(0, 10);
+                link.href = url;
+                link.setAttribute('download', `방문자등록명단_${todayStr}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             }
 
-            if (registeredRecords.length === 0) {
+            // 9. XSS 방지용 HTML 이스케이프 헬퍼 및 모달 제어
+            function escapeHTML(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function openSuccessModal(record) {
+                const modal = document.getElementById('successModal');
+                const summary = document.getElementById('modalSummaryText');
+                if (!modal || !summary) return;
+                summary.innerHTML = `
+                    <strong class="text-slate-900">${escapeHTML(record.visitorName)}</strong>님의 방문 등록이 정상적으로 접수되었습니다.<br>
+                    <span class="text-xs text-slate-400 mt-1 inline-block">(전도자: ${escapeHTML(record.evangelistName)} / ${escapeHTML(record.evangelistGroup)})</span>
+                `;
+                modal.classList.remove('hidden');
+            }
+
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
+                if (modal) modal.classList.add('hidden');
+            }
+
+            function openRecordsModal() {
+                renderRecordsTable();
+                const modal = document.getElementById('recordsModal');
+                if (modal) modal.classList.remove('hidden');
+            }
+
+            function closeRecordsModal() {
+                const modal = document.getElementById('recordsModal');
+                if (modal) modal.classList.add('hidden');
+            }
+
+            function renderRecordsTable() {
+                const countBadge = document.getElementById('recordCountBadge');
+                const modalCountBadge = document.getElementById('modalRecordCountBadge');
+                const emptyState = document.getElementById('emptyState');
+                const tableWrapper = document.getElementById('tableWrapper');
+                const tbody = document.getElementById('recordsTableBody');
+
+                if (countBadge) countBadge.textContent = `${registeredRecords.length}`;
+                if (modalCountBadge) modalCountBadge.textContent = `${registeredRecords.length}건`;
+
+                if (!emptyState || !tableWrapper || !tbody) return;
+
+                if (registeredRecords.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    tableWrapper.classList.add('hidden');
+                    tbody.innerHTML = '';
+                    return;
+                }
+
                 emptyState.classList.remove('hidden');
-                tableWrapper.classList.add('hidden');
-                tbody.innerHTML = '';
-                return;
+                tableWrapper.classList.remove('hidden');
+
+                tbody.innerHTML = registeredRecords.map(item => `
+                    <tr class="hover:bg-amber-50/40 transition">
+                        <td class="py-3 px-4 whitespace-nowrap text-slate-500">${escapeHTML(item.pledgeDate)}</td>
+                        <td class="py-3 px-4 whitespace-nowrap">
+                            <span class="font-medium text-slate-800">${escapeHTML(item.evangelistName)}</span>
+                            <span class="text-xs text-slate-400">(${escapeHTML(item.evangelistGroup)})</span>
+                        </td>
+                        <td class="py-3 px-4 whitespace-nowrap font-bold text-amber-800">${escapeHTML(item.visitorName)}</td>
+                        <td class="py-3 px-4 whitespace-nowrap">${escapeHTML(item.gender)}</td>
+                        <td class="py-3 px-4 whitespace-nowrap">${escapeHTML(item.birthDate)}</td>
+                        <td class="py-3 px-4 whitespace-nowrap font-mono text-xs">${escapeHTML(item.phone)}</td>
+                    </tr>
+                `).join('');
             }
-
-            emptyState.classList.add('hidden');
-            tableWrapper.classList.remove('hidden');
-
-            tbody.innerHTML = registeredRecords.map(item => `
-                <tr class="hover:bg-amber-50/40 transition">
-                    <td class="py-3 px-4 whitespace-nowrap text-slate-500">${escapeHTML(item.pledgeDate)}</td>
-                    <td class="py-3 px-4 whitespace-nowrap">
-                        <span class="font-medium text-slate-800">${escapeHTML(item.evangelistName)}</span>
-                        <span class="text-xs text-slate-400">(${escapeHTML(item.evangelistGroup)})</span>
-                    </td>
-                    <td class="py-3 px-4 whitespace-nowrap font-bold text-amber-800">${escapeHTML(item.visitorName)}</td>
-                    <td class="py-3 px-4 whitespace-nowrap">${escapeHTML(item.gender)}</td>
-                    <td class="py-3 px-4 whitespace-nowrap">${escapeHTML(item.birthDate)}</td>
-                    <td class="py-3 px-4 whitespace-nowrap font-mono text-xs">${escapeHTML(item.phone)}</td>
-                </tr>
-            `).join('');
-        }
-// ... existing code ... -->
+        })();
+    </script>
+</body>
+</html>
