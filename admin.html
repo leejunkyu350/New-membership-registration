@@ -172,7 +172,7 @@
             const ADMIN_PASSWORD = '1234';
             const STORAGE_KEY = 'visitor_registration_records_v1';
             const CACHE_KEY = 'admin_dashboard_cache_v1';
-            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec'; 
+            const GOOGLE_APPS_SCRIPT_URL = ''; 
 
             let allRecords = [];
             let prefetchPromise = null; // 로그인 화면에서 미리 요청해 두는 프로미스
@@ -374,6 +374,21 @@
                     .replace(/'/g, '&#39;');
             }
 
+            // ISO 날짜 문자열(예: 1990-05-14T15:00:00.000Z)을 한국 시간 기준 YYYY-MM-DD로 변환
+            function formatCleanDate(val) {
+                if (!val) return '-';
+                const str = String(val).trim();
+                if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+                if (str.includes('T')) {
+                    const d = new Date(str);
+                    if (!isNaN(d.getTime())) {
+                        const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+                        return kst.toISOString().slice(0, 10);
+                    }
+                }
+                return str;
+            }
+
             function renderTable(records) {
                 const emptyState = document.getElementById('emptyState');
                 const tableWrapper = document.getElementById('tableWrapper');
@@ -391,18 +406,21 @@
 
                 tbody.innerHTML = records.map((item, idx) => {
                     const groupDisplay = item.evangelistGroup || [item.evangelistCategory1, item.evangelistCategory2, item.evangelistCategory3].filter(Boolean).join(' > ') || '-';
+                    const pledgeDateClean = formatCleanDate(item.pledgeDate);
+                    const evBirthClean = formatCleanDate(item.evangelistBirthDate);
+                    const visitorBirthClean = formatCleanDate(item.birthDate);
                     return `
                         <tr class="hover:bg-slate-50/90 transition">
                             <td class="py-3.5 px-5 font-medium text-slate-400 whitespace-nowrap">${records.length - idx}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.pledgeDate)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(pledgeDateClean)}</td>
                             <td class="py-3.5 px-5 whitespace-nowrap">
                                 <span class="font-semibold text-slate-900">${escapeHTML(item.evangelistName)}</span>
-                                <span class="text-xs text-slate-400 ml-1">(${escapeHTML(item.evangelistBirthDate || '-')})</span>
+                                <span class="text-xs text-slate-400 ml-1">(${escapeHTML(evBirthClean)})</span>
                             </td>
                             <td class="py-3.5 px-5 whitespace-nowrap text-slate-600">${escapeHTML(groupDisplay)}</td>
                             <td class="py-3.5 px-5 font-bold text-purple-900 whitespace-nowrap">${escapeHTML(item.visitorName)}</td>
                             <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.gender)}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.birthDate)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(visitorBirthClean)}</td>
                             <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.phone)}</td>
                             <td class="py-3.5 px-5 max-w-xs truncate" title="${escapeHTML(item.prayerTopic)}">${escapeHTML(item.prayerTopic || '-')}</td>
                             <td class="py-3.5 px-5 text-xs text-slate-400 whitespace-nowrap">${escapeHTML(item.submittedAt)}</td>
@@ -420,15 +438,15 @@
                 const headers = ['No', '작정일', '전도자성명', '전도자생년월일', '대분류', '중분류', '소분류', '태신자성함', '성별', '태신자생년월일', '연락처', '기도제목', '접수일시'];
                 const rows = allRecords.map((r, i) => [
                     allRecords.length - i,
-                    r.pledgeDate || '',
+                    formatCleanDate(r.pledgeDate),
                     r.evangelistName || '',
-                    r.evangelistBirthDate || '',
+                    formatCleanDate(r.evangelistBirthDate),
                     r.evangelistCategory1 || '',
                     r.evangelistCategory2 || '',
                     r.evangelistCategory3 || '',
                     r.visitorName || '',
                     r.gender || '',
-                    r.birthDate || '',
+                    formatCleanDate(r.birthDate),
                     r.phone || '',
                     r.prayerTopic || '',
                     r.submittedAt || ''
