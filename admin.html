@@ -129,6 +129,16 @@
 
         <!-- 명단 테이블 카드 -->
         <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <!-- 데이터 로딩 스피너 -->
+            <div id="loadingState" class="hidden text-center py-16 px-4">
+                <svg class="animate-spin h-8 w-8 text-amber-600 mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-sm font-semibold text-slate-700">구글 시트에서 최신 명단을 불러오고 있습니다...</p>
+                <p class="text-xs text-slate-400 mt-1">잠시만 기다려 주세요.</p>
+            </div>
+
             <div id="emptyState" class="text-center py-16 px-4 text-sm text-slate-400">
                 표시할 등록 명단이 없습니다.<br>태신자 등록 페이지에서 데이터를 제출하면 이곳에서 확인할 수 있습니다.
             </div>
@@ -161,13 +171,19 @@
         (function() {
             const ADMIN_PASSWORD = '1234';
             const STORAGE_KEY = 'visitor_registration_records_v1';
+            const CACHE_KEY = 'admin_dashboard_cache_v1';
             const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec'; 
 
             let allRecords = [];
+            let prefetchPromise = null; // 로그인 화면에서 미리 요청해 두는 프로미스
 
             function initAdmin() {
                 setupLogin();
                 setupControls();
+                // 1. 페이지가 열리자마자(비밀번호 치는 동안) 백그라운드에서 미리 데이터 요청 시작
+                if (GOOGLE_APPS_SCRIPT_URL) {
+                    prefetchPromise = fetchRemoteData();
+                }
             }
 
             if (document.readyState === 'loading') {
@@ -175,87 +191,62 @@
             } else {
                 initAdmin();
             }
-
-            function setupLogin() {
-                const loginForm = document.getElementById('loginForm');
-                const passwordInput = document.getElementById('adminPasswordInput');
-                const errorMsg = document.getElementById('loginErrorMsg');
-
-                if (!loginForm) return;
-
-                loginForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    if (passwordInput.value === ADMIN_PASSWORD) {
-                        errorMsg.classList.add('hidden');
-                        passwordInput.value = '';
-                        document.getElementById('loginScreen').classList.add('hidden');
-                        document.getElementById('dashboardScreen').classList.remove('hidden');
-                        loadRecords();
-                    } else {
-                        errorMsg.classList.remove('hidden');
-                        passwordInput.focus();
-                    }
-                });
-            }
-
-            function setupControls() {
-                const refreshBtn = document.getElementById('refreshBtn');
-                const downloadCsvBtn = document.getElementById('downloadCsvBtn');
-                const logoutBtn = document.getElementById('logoutBtn');
-                const searchInput = document.getElementById('searchInput');
-                const categoryFilter = document.getElementById('categoryFilter');
-                const closeAdminBannerBtn = document.getElementById('closeAdminBannerBtn');
-
-                if (refreshBtn) {
-                    refreshBtn.addEventListener('click', () => {
-                        loadRecords();
-                        showBanner('최신 명단으로 새로고침되었습니다.');
-                    });
-                }
-
-                if (downloadCsvBtn) {
-                    downloadCsvBtn.addEventListener('click', downloadCSV);
-                }
-
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', () => {
-                        document.getElementById('dashboardScreen').classList.add('hidden');
-                        document.getElementById('loginScreen').classList.remove('hidden');
-                    });
-                }
-
-                if (searchInput) {
-                    searchInput.addEventListener('input', () => applyFilters());
-                }
-
-                if (categoryFilter) {
-                    categoryFilter.addEventListener('change', () => applyFilters());
-                }
-
-                if (closeAdminBannerBtn) {
-                    closeAdminBannerBtn.addEventListener('click', () => {
-                        document.getElementById('adminBanner').classList.add('hidden');
-                    });
-                }
-            }
-
-            function applyFilters() {
-                const keyword = document.getElementById('searchInput')?.value.trim() || '';
-                const category = document.getElementById('categoryFilter')?.value || '';
-                renderTable(keyword, category);
-            }
-
-            async function loadRecords() {
-                if (GOOGLE_APPS_SCRIPT_URL) {
+// ... existing code ... -->
+            async function fetchRemoteData() {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, { cache: 'no-store' });
+                const data = await response.json();
+                if (Array.isArray(data)) {
                     try {
-                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
-                        const data = await response.json();
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                    } catch (e) {}
+                    return data;
+                }
+                return null;
+            }
+
+            async function loadRecords(forceRefresh = false) {
+                const loadingState = document.getElementById('loadingState');
+                const emptyState = document.getElementById('emptyState');
+                const tableWrapper = document.getElementById('tableWrapper');
+
+                if (GOOGLE_APPS_SCRIPT_URL) {
+                    // 2. 캐시된 데이터가 있으면 0.01초 만에 먼저 화면에 즉시 표시
+                    let hasCache = false;
+                    try {
+                        const cachedRaw = localStorage.getItem(CACHE_KEY);
+                        if (cachedRaw) {
+                            const cachedData = JSON.parse(cachedRaw);
+                            if (Array.isArray(cachedData) && cachedData.length > 0) {
+                                allRecords = cachedData;
+                                hasCache = true;
+                                updateStats();
+                                applyFilters();
+                            }
+                        }
+                    } catch (e) {}
+
+                    // 캐시가 없는 첫 접속일 때만 로딩 스피너 표시
+                    if (!hasCache && loadingState) {
+                        emptyState?.classList.add('hidden');
+                        tableWrapper?.classList.add('hidden');
+                        loadingState.classList.remove('hidden');
+                    }
+
+                    try {
+                        // 로그인 전 미리 시작해 둔 요청이 있으면 재사용, 새로고침 버튼 시 새 요청
+                        const data = (!forceRefresh && prefetchPromise)
+                            ? await prefetchPromise
+                            : await fetchRemoteData();
+                        prefetchPromise = null;
+
                         if (Array.isArray(data)) {
                             allRecords = data;
                         }
                     } catch (err) {
                         console.error('원격 데이터 조회 오류:', err);
                         showBanner('서버 데이터를 불러오는 중 오류가 발생했습니다.');
+                    } finally {
+                        loadingState?.classList.add('hidden');
                     }
                 } else {
                     try {
@@ -270,104 +261,64 @@
                 applyFilters();
             }
 
-            function updateStats() {
-                const totalEl = document.getElementById('totalCount');
-                const todayEl = document.getElementById('todayCount');
-                
-                const today = new Date();
-                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-                const todayMatches = allRecords.filter(r => r.pledgeDate === todayStr).length;
+            function setupLogin() {
+                const loginForm = document.getElementById('loginForm');
+                const passwordInput = document.getElementById('adminPasswordInput');
+                const errorMsg = document.getElementById('loginErrorMsg');
+                const loginScreen = document.getElementById('loginScreen');
+                const dashboardScreen = document.getElementById('dashboardScreen');
 
-                if (totalEl) totalEl.textContent = allRecords.length;
-                if (todayEl) todayEl.textContent = todayMatches;
-            }
+                if (!loginForm) return;
 
-            function renderTable(keyword = '', category = '') {
-                const emptyState = document.getElementById('emptyState');
-                const tableWrapper = document.getElementById('tableWrapper');
-                const tbody = document.getElementById('recordsTableBody');
-
-                const filtered = allRecords.filter(item => {
-                    const matchesCategory = !category || item.evangelistCategory1 === category || String(item.evangelistGroup || '').startsWith(category);
-                    const matchesKeyword = !keyword || [
-                        item.visitorName,
-                        item.evangelistName,
-                        item.evangelistBirthDate,
-                        item.evangelistGroup,
-                        item.phone,
-                        item.pledgeDate,
-                        item.birthDate
-                    ].some(field => String(field || '').toLowerCase().includes(keyword.toLowerCase()));
-                    return matchesCategory && matchesKeyword;
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (passwordInput.value === ADMIN_PASSWORD) {
+                        errorMsg.classList.add('hidden');
+                        loginScreen.classList.add('hidden');
+                        dashboardScreen.classList.remove('hidden');
+                        passwordInput.value = '';
+                        loadRecords();
+                    } else {
+                        errorMsg.classList.remove('hidden');
+                        passwordInput.focus();
+                    }
                 });
-
-                if (filtered.length === 0) {
-                    emptyState.classList.remove('hidden');
-                    tableWrapper.classList.add('hidden');
-                    tbody.innerHTML = '';
-                    return;
-                }
-
-                emptyState.classList.add('hidden');
-                tableWrapper.classList.remove('hidden');
-
-                tbody.innerHTML = filtered.map((item, idx) => {
-                    const evBirth = item.evangelistBirthDate ? `<span class="text-xs text-slate-400 ml-1">(${escapeHTML(item.evangelistBirthDate)})</span>` : '';
-                    return `
-                        <tr class="hover:bg-amber-50/40 transition">
-                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-400 font-mono text-xs">${filtered.length - idx}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-600">${escapeHTML(item.pledgeDate)}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap">
-                                <span class="font-semibold text-slate-800">${escapeHTML(item.evangelistName)}</span>${evBirth}
-                            </td>
-                            <td class="py-3.5 px-5 whitespace-nowrap text-xs text-slate-600">${escapeHTML(item.evangelistGroup)}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap font-bold text-[#531B75]">${escapeHTML(item.visitorName)}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.gender)}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-600">${escapeHTML(item.birthDate)}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap font-mono text-xs text-slate-700">${escapeHTML(item.phone)}</td>
-                            <td class="py-3.5 px-5 max-w-xs truncate text-xs text-slate-600" title="${escapeHTML(item.prayerTopic || '')}">${escapeHTML(item.prayerTopic || '-')}</td>
-                            <td class="py-3.5 px-5 whitespace-nowrap text-xs text-slate-400">${escapeHTML(item.submittedAt)}</td>
-                        </tr>
-                    `;
-                }).join('');
             }
 
-            function downloadCSV() {
-                if (allRecords.length === 0) {
-                    showBanner('다운로드할 등록 데이터가 없습니다.');
-                    return;
+            function setupControls() {
+                const searchInput = document.getElementById('searchInput');
+                const categoryFilter = document.getElementById('categoryFilter');
+                const refreshBtn = document.getElementById('refreshBtn');
+                const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const closeBannerBtn = document.getElementById('closeAdminBannerBtn');
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', applyFilters);
                 }
-
-                const headers = ['접수일시', '작정일', '전도자이름', '전도자생년월일', '대분류', '중분류', '소분류', '전체소속', '태신자이름', '성별', '태신자생년월일', '연락처', '기도제목', '개인정보동의'];
-                const rows = allRecords.map(r => [
-                    r.submittedAt,
-                    r.pledgeDate,
-                    r.evangelistName,
-                    r.evangelistBirthDate || '',
-                    r.evangelistCategory1 || '',
-                    r.evangelistCategory2 || '',
-                    r.evangelistCategory3 || '',
-                    r.evangelistGroup,
-                    r.visitorName,
-                    r.gender,
-                    r.birthDate,
-                    r.phone,
-                    r.prayerTopic || '',
-                    r.privacyAgreed
-                ].map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(','));
-
-                const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-
-                const link = document.createElement('a');
-                const todayStr = new Date().toISOString().slice(0, 10);
-                link.href = url;
-                link.setAttribute('download', `태신자등록명단_${todayStr}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
+                if (categoryFilter) {
+                    categoryFilter.addEventListener('change', applyFilters);
+                }
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => {
+                        loadRecords(true);
+                        showBanner('최신 명단으로 새로고침되었습니다.');
+                    });
+                }
+                if (downloadCsvBtn) {
+                    downloadCsvBtn.addEventListener('click', downloadCSV);
+                }
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        document.getElementById('dashboardScreen').classList.add('hidden');
+                        document.getElementById('loginScreen').classList.remove('hidden');
+                    });
+                }
+                if (closeBannerBtn) {
+                    closeBannerBtn.addEventListener('click', () => {
+                        document.getElementById('adminBanner').classList.add('hidden');
+                    });
+                }
             }
 
             function showBanner(msg) {
@@ -378,6 +329,42 @@
                 banner.classList.remove('hidden');
             }
 
+            function updateStats() {
+                const totalEl = document.getElementById('totalCount');
+                const todayEl = document.getElementById('todayCount');
+                if (totalEl) totalEl.textContent = allRecords.length;
+
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const todayMatches = allRecords.filter(r => String(r.pledgeDate || '').startsWith(todayStr));
+                if (todayEl) todayEl.textContent = todayMatches.length;
+            }
+
+            function applyFilters() {
+                const keyword = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+                const cat1 = document.getElementById('categoryFilter')?.value || '';
+
+                const filtered = allRecords.filter(item => {
+                    if (cat1 && item.evangelistCategory1 !== cat1) return false;
+                    if (!keyword) return true;
+
+                    const targetText = [
+                        item.visitorName,
+                        item.evangelistName,
+                        item.evangelistBirthDate,
+                        item.evangelistGroup,
+                        item.birthDate,
+                        item.phone,
+                        item.pledgeDate,
+                        item.prayerTopic
+                    ].join(' ').toLowerCase();
+
+                    return targetText.includes(keyword);
+                });
+
+                renderTable(filtered);
+            }
+
             function escapeHTML(str) {
                 return String(str || '')
                     .replace(/&/g, '&amp;')
@@ -385,6 +372,80 @@
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, '&quot;')
                     .replace(/'/g, '&#39;');
+            }
+
+            function renderTable(records) {
+                const emptyState = document.getElementById('emptyState');
+                const tableWrapper = document.getElementById('tableWrapper');
+                const tbody = document.getElementById('recordsTableBody');
+                if (!emptyState || !tableWrapper || !tbody) return;
+
+                if (records.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    tableWrapper.classList.add('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                tableWrapper.classList.remove('hidden');
+
+                tbody.innerHTML = records.map((item, idx) => {
+                    const groupDisplay = item.evangelistGroup || [item.evangelistCategory1, item.evangelistCategory2, item.evangelistCategory3].filter(Boolean).join(' > ') || '-';
+                    return `
+                        <tr class="hover:bg-slate-50/90 transition">
+                            <td class="py-3.5 px-5 font-medium text-slate-400 whitespace-nowrap">${records.length - idx}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.pledgeDate)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">
+                                <span class="font-semibold text-slate-900">${escapeHTML(item.evangelistName)}</span>
+                                <span class="text-xs text-slate-400 ml-1">(${escapeHTML(item.evangelistBirthDate || '-')})</span>
+                            </td>
+                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-600">${escapeHTML(groupDisplay)}</td>
+                            <td class="py-3.5 px-5 font-bold text-purple-900 whitespace-nowrap">${escapeHTML(item.visitorName)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.gender)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.birthDate)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.phone)}</td>
+                            <td class="py-3.5 px-5 max-w-xs truncate" title="${escapeHTML(item.prayerTopic)}">${escapeHTML(item.prayerTopic || '-')}</td>
+                            <td class="py-3.5 px-5 text-xs text-slate-400 whitespace-nowrap">${escapeHTML(item.submittedAt)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function downloadCSV() {
+                if (allRecords.length === 0) {
+                    showBanner('다운로드할 등록 명단이 없습니다.');
+                    return;
+                }
+
+                const headers = ['No', '작정일', '전도자성명', '전도자생년월일', '대분류', '중분류', '소분류', '태신자성함', '성별', '태신자생년월일', '연락처', '기도제목', '접수일시'];
+                const rows = allRecords.map((r, i) => [
+                    allRecords.length - i,
+                    r.pledgeDate || '',
+                    r.evangelistName || '',
+                    r.evangelistBirthDate || '',
+                    r.evangelistCategory1 || '',
+                    r.evangelistCategory2 || '',
+                    r.evangelistCategory3 || '',
+                    r.visitorName || '',
+                    r.gender || '',
+                    r.birthDate || '',
+                    r.phone || '',
+                    r.prayerTopic || '',
+                    r.submittedAt || ''
+                ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(','));
+
+                const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+
+                link.href = url;
+                link.download = `태신자_취합명단_${today}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             }
         })();
     </script>
