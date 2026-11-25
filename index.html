@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>여의도순복음교회 - 온라인 태신자 카드</title>
+    <title>온라인 태신자 카드</title>
     <!-- Tailwind CSS 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2canvas (전도자 기도 보관용 카드 이미지 저장용) -->
+    <!-- html2canvas 로드 (전도자 기도 보관용 이미지 저장 기능) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Pretendard & Noto Serif KR 폰트 로드 -->
+    <!-- Pretendard, Noto Serif KR 폰트 로드 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -20,549 +20,493 @@
                 extend: {
                     fontFamily: {
                         sans: ['"Pretendard"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-                        serifTitle: ['"Noto Serif KR"', 'serif'],
-                    },
-                    colors: {
-                        church: {
-                            deep: '#531B75',     // 메인 딥 퍼플
-                            dark: '#3D1159',     // 타이틀 다크 퍼플
-                            mid: '#7E3AF2',      // 포인트 퍼플
-                            light: '#F3E8FA',    // 연보라 라벨 배경
-                            tint: '#FAF5FF',     // 연보라 카드 배경
-                            border: '#C4A3DB',   // 입력칸 테두리 보라
-                            gold: '#D4A853',     // 금빛 물결 포인트
-                        }
+                        serif: ['"Noto Serif KR"', 'serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        /* 카드 배경 은은한 보라빛 물결 패턴 */
-        .card-bg-canvas {
-            background: linear-gradient(180deg, #F6EEFC 0%, #FFFFFF 18%, #FFFFFF 82%, #F4EAFB 100%);
+        /* 전체 카드 은은한 보라빛 물결 그라데이션 배경 */
+        .card-canvas-bg {
+            background: 
+                radial-gradient(ellipse at 15% 5%, rgba(168, 121, 214, 0.35) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 8%, rgba(145, 95, 195, 0.32) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 96%, rgba(168, 121, 214, 0.35) 0%, transparent 55%),
+                linear-gradient(180deg, #F5EEFA 0%, #FFFFFF 22%, #FFFFFF 78%, #F3EAF9 100%);
         }
-        /* 입력창 기본 포커스 및 커스텀 스타일 */
+        /* 입력창 기본 스타일 */
         .card-input {
-            border: 1.5px solid #B794D4;
-            background-color: #FFFFFF;
-            border-radius: 0.65rem;
-            transition: all 0.15s ease;
-        }
-        .card-input:focus {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            padding: 0 0.65rem;
+            font-size: 0.875rem;
+            color: #1E1B2E;
             outline: none;
-            border-color: #531B75;
-            box-shadow: 0 0 0 3px rgba(83, 27, 117, 0.14);
         }
-        .card-input:disabled {
-            background-color: #F8F5FA;
-            border-color: #DFCEE9;
-            color: #9CA3AF;
+        .card-input::placeholder {
+            color: #A195B2;
+            font-size: 0.8rem;
+        }
+        /* 상단 곡선형 딥퍼플 헤더 탭 */
+        .section-tab-header {
+            background: linear-gradient(90deg, #531B75 0%, #6B2791 100%);
+            border-radius: 18px 18px 28px 0;
         }
     </style>
 </head>
-<body class="bg-[#EDE4F5] text-slate-800 antialiased min-h-screen py-4 px-3 sm:py-8 sm:px-5 lg:py-10">
+<body class="bg-purple-50/60 text-slate-800 antialiased min-h-screen py-4 px-3 sm:py-8 sm:px-6">
 
-    <!-- 메인 반응형 컨테이너 (모바일: 세로 카드형 / PC: 가로 와이드 절취선형) -->
-    <div class="max-w-xl lg:max-w-6xl mx-auto">
+    <!-- 전체 태신자 카드 프레임 (모바일: 세로 1열 / PC: 가로 2단 절취선 레이아웃) -->
+    <div id="taesinjaCardRoot" class="max-w-lg lg:max-w-[1060px] mx-auto card-canvas-bg rounded-[28px] shadow-2xl shadow-purple-950/15 border border-purple-200/80 overflow-hidden relative">
+        
+        <!-- 상단 금빛 & 보라빛 물결 SVG 장식 -->
+        <svg class="w-full h-24 sm:h-28 absolute top-0 left-0 pointer-events-none opacity-85" viewBox="0 0 1000 140" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="purpleWaveTop" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#D8B4E2" stop-opacity="0.7"/>
+                    <stop offset="50%" stop-color="#EDE0F5" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#B983D6" stop-opacity="0.75"/>
+                </linearGradient>
+                <linearGradient id="goldRibbonTop" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.85"/>
+                    <stop offset="50%" stop-color="#F6E299" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#C59B27" stop-opacity="0.8"/>
+                </linearGradient>
+            </defs>
+            <path d="M0,0 L1000,0 L1000,85 Q750,35 500,80 T0,65 Z" fill="url(#purpleWaveTop)"/>
+            <path d="M0,78 Q260,115 540,72 T1000,88" fill="none" stroke="url(#goldRibbonTop)" stroke-width="3.5"/>
+        </svg>
 
-        <!-- 알림 메시지 박스 -->
-        <div id="feedbackBanner" class="hidden mb-4 p-4 rounded-2xl border text-sm font-medium transition-all duration-300 shadow-md" role="alert">
-            <div class="flex items-start gap-3">
-                <span id="feedbackIcon" class="mt-0.5 shrink-0"></span>
-                <div class="flex-1">
-                    <p id="feedbackTitle" class="font-bold"></p>
-                    <p id="feedbackMessage" class="mt-0.5 opacity-90"></p>
-                </div>
-                <button type="button" id="closeFeedbackBtn" class="text-current opacity-60 hover:opacity-100 p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- 전체 태신자 카드 프레임 -->
-        <div class="card-bg-canvas rounded-[28px] shadow-2xl shadow-purple-950/15 border border-purple-200/80 overflow-hidden relative">
-            
-            <!-- 상단 보라빛 & 금빛 물결 SVG 장식 -->
-            <div class="relative pt-6 pb-4 px-4 sm:pt-8 sm:pb-6 sm:px-8 overflow-hidden">
-                <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 220" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="topWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#DFC7F2" stop-opacity="0.75"/>
-                            <stop offset="50%" stop-color="#F7F0FC" stop-opacity="0.3"/>
-                            <stop offset="100%" stop-color="#C9A2E8" stop-opacity="0.8"/>
-                        </linearGradient>
-                        <linearGradient id="goldWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#D4A853" stop-opacity="0.2"/>
-                            <stop offset="50%" stop-color="#E6C27A" stop-opacity="0.85"/>
-                            <stop offset="100%" stop-color="#C5933E" stop-opacity="0.9"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,0 L1200,0 L1200,130 C980,210 720,40 420,140 C210,205 80,150 0,120 Z" fill="url(#topWaveGrad)"/>
-                    <path d="M0,145 C250,215 620,65 1200,155" fill="none" stroke="url(#goldWaveGrad)" stroke-width="4"/>
-                    <path d="M780,175 C940,155 1080,95 1200,45" fill="none" stroke="url(#goldWaveGrad)" stroke-width="6"/>
+        <!-- 상단 타이틀 영역 -->
+        <header class="relative z-10 pt-6 sm:pt-8 pb-4 px-5 text-center">
+            <!-- 교회 로고 및 명칭 -->
+            <div class="inline-flex items-center justify-center gap-2 mb-1.5">
+                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#D32F2F]" viewBox="0 0 36 36" fill="none">
+                    <circle cx="18" cy="18" r="15.5" stroke="currentColor" stroke-width="2.4"/>
+                    <path d="M18 3V33M12 7V29M24 7V29M4 16H32M6 22H30" stroke="currentColor" stroke-width="2"/>
                 </svg>
-
-                <!-- 상단 헤더 콘텐츠 (교회 로고 + 타이틀 + 슬로건) -->
-                <div class="relative z-10 flex flex-col items-center text-center">
-                    <div class="flex flex-col lg:flex-row items-center justify-center gap-2 lg:gap-5">
-                        <!-- 교회 로고 심볼 (SVG) & 교회명 -->
-                        <div class="flex items-center gap-2.5">
-                            <svg class="w-9 h-9 sm:w-10 sm:h-10 shrink-0" viewBox="0 0 48 48" fill="none">
-                                <circle cx="24" cy="24" r="21" stroke="#E11D48" stroke-width="3.2" fill="#FFFFFF"/>
-                                <path d="M24 5V43M10 24H38" stroke="#E11D48" stroke-width="3.5" stroke-linecap="round"/>
-                                <path d="M16 11C13 15 12 19 12 24C12 29 13 33 16 37M32 11C35 15 36 19 36 24C36 29 35 33 32 37" stroke="#E11D48" stroke-width="2.5" stroke-linecap="round"/>
-                            </svg>
-                            <div class="text-left">
-                                <p class="text-lg sm:text-xl font-extrabold tracking-tight text-[#1E3A8A] leading-none">여의도순복음교회</p>
-                                <p class="text-[9px] sm:text-[10px] font-bold tracking-wider text-slate-700 mt-0.5">YOIDO FULL GOSPEL CHURCH</p>
-                            </div>
-                        </div>
-
-                        <span class="hidden lg:inline-block w-[1.5px] h-9 bg-slate-400/60"></span>
-
-                        <!-- 메인 타이틀 + 금빛 월계수 잎 장식 -->
-                        <div class="relative inline-flex items-center mt-1 lg:mt-0">
-                            <h1 class="font-serifTitle text-3xl sm:text-4xl lg:text-[42px] font-black text-[#3D1159] tracking-tight drop-shadow-2xs">
-                                온라인 태신자 카드
-                            </h1>
-                            <!-- 금빛 곡선 & 잎사귀 SVG -->
-                            <svg class="w-12 h-9 sm:w-14 sm:h-10 -ml-2 -mt-1 text-[#D4A853] shrink-0" viewBox="0 0 64 48" fill="none">
-                                <path d="M4 40C24 40 42 30 56 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-                                <path d="M36 31C35 24 40 20 45 21C44 26 40 30 36 31Z" fill="currentColor"/>
-                                <path d="M46 23C45 16 50 12 55 13C54 18 50 22 46 23Z" fill="currentColor"/>
-                                <path d="M43 32C49 32 54 29 55 24C49 24 45 27 43 32Z" fill="currentColor"/>
-                                <path d="M53 21C58 20 62 16 62 11C57 12 54 16 53 21Z" fill="currentColor"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- 부흥 슬로건 -->
-                    <div class="flex items-center justify-center gap-3 mt-3 w-full max-w-md">
-                        <span class="h-[1.5px] flex-1 bg-gradient-to-r from-transparent to-[#D4A853]"></span>
-                        <p class="text-xs sm:text-sm font-bold text-slate-800 tracking-tight whitespace-nowrap">
-                            성령의 바람으로, 다시 타오르는 부흥의 불길
-                        </p>
-                        <span class="h-[1.5px] flex-1 bg-gradient-to-l from-transparent to-[#D4A853]"></span>
-                    </div>
+                <div class="text-left leading-none">
+                    <div class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">여의도순복음교회</div>
+                    <div class="text-[8px] sm:text-[9px] font-bold tracking-[0.14em] text-slate-600 mt-0.5">YOIDO FULL GOSPEL CHURCH</div>
                 </div>
             </div>
 
-            <!-- 카드 본문 영역: 모바일(상하 배치) / PC(좌우 배치 + 가운데 절취선) -->
-            <form id="registrationForm" novalidate class="relative z-10 px-4 pb-8 sm:px-7 lg:px-8 lg:pb-10">
-                <div class="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-0">
-                    
-                    <!-- [왼쪽 / 상단] 교회 제출용 카드 -->
-                    <div class="lg:w-[62%] lg:pr-6">
-                        <div class="bg-white/95 rounded-2xl border-2 border-[#C4A3DB] shadow-md overflow-hidden">
-                            
-                            <!-- 곡선형 딥퍼플 헤더 바 ("교회 제출용") -->
-                            <div class="relative bg-[#F3E8FA] flex items-center justify-between pr-4">
-                                <div class="relative bg-[#531B75] text-white py-2.5 pl-4 pr-10 rounded-br-[36px] flex items-center gap-2 shadow-xs">
-                                    <!-- 교회 아이콘 SVG -->
-                                    <svg class="w-6 h-6 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m-2-2h4M6 21V11l6-5 6 5v10M4 21h16M10 21v-5a2 2 0 114 0v5"/>
-                                    </svg>
-                                    <span class="text-base sm:text-lg font-extrabold tracking-tight">교회 제출용</span>
-                                </div>
-                                <span class="text-xs sm:text-sm font-bold text-slate-800">작성 후 저장 또는 제출해 주세요.</span>
-                            </div>
-
-                            <!-- 입력 폼 그리드 (태신자 카드 양식 디자인 적용) -->
-                            <div class="p-3.5 sm:p-5 space-y-3">
-                                
-                                <!-- 1행: 전도자 성명 / 전도자 생년월일 -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                    <div class="flex items-stretch gap-1.5">
-                                        <label for="evangelistName" class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex flex-col items-center justify-center text-center leading-tight py-2 px-1">
-                                            <span>전도자</span>
-                                            <span>성명 <span class="text-rose-600">*</span></span>
-                                        </label>
-                                        <input type="text" id="evangelistName" name="evangelistName" required placeholder="예: 김은혜"
-                                            class="card-input flex-1 min-w-0 px-3 py-2.5 text-sm sm:text-base font-medium text-slate-900">
-                                    </div>
-
-                                    <div class="flex items-stretch gap-1.5">
-                                        <label for="evangelistBirthDate" class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex flex-col items-center justify-center text-center leading-tight py-2 px-1">
-                                            <span>전도자</span>
-                                            <span>생년월일 <span class="text-rose-600">*</span></span>
-                                        </label>
-                                        <input type="date" id="evangelistBirthDate" name="evangelistBirthDate" required max="2026-12-31"
-                                            class="card-input flex-1 min-w-0 px-2.5 py-2.5 text-xs sm:text-sm font-medium text-slate-900">
-                                    </div>
-                                </div>
-
-                                <!-- 2행: 전도자 소속 (대분류 / 중분류 / 소분류) -->
-                                <div class="flex items-stretch gap-1.5">
-                                    <label class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex flex-col items-center justify-center text-center leading-tight py-2 px-1">
-                                        <span>전도자</span>
-                                        <span>소속 <span class="text-rose-600">*</span></span>
-                                    </label>
-                                    <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-1.5">
-                                        <div class="relative">
-                                            <select id="evangelistCategory1" name="evangelistCategory1" required
-                                                class="card-input w-full px-2.5 py-2.5 pr-7 text-xs sm:text-sm font-semibold text-slate-800 appearance-none cursor-pointer">
-                                                <option value="" disabled selected>대분류 선택</option>
-                                                <option value="대교구">대교구</option>
-                                                <option value="지성전">지성전</option>
-                                                <option value="준교구">준교구</option>
-                                            </select>
-                                            <svg class="w-3.5 h-3.5 text-[#531B75] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7"/></svg>
-                                        </div>
-
-                                        <div class="relative">
-                                            <select id="evangelistCategory2" name="evangelistCategory2" required disabled
-                                                class="card-input w-full px-2.5 py-2.5 pr-7 text-xs sm:text-sm font-semibold text-slate-800 appearance-none cursor-pointer disabled:cursor-not-allowed">
-                                                <option value="" disabled selected>중분류</option>
-                                            </select>
-                                            <svg class="w-3.5 h-3.5 text-[#531B75] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7"/></svg>
-                                        </div>
-
-                                        <div class="relative">
-                                            <select id="evangelistCategory3" name="evangelistCategory3" required disabled
-                                                class="card-input w-full px-2.5 py-2.5 pr-7 text-xs sm:text-sm font-semibold text-slate-800 appearance-none cursor-pointer disabled:cursor-not-allowed">
-                                                <option value="" disabled selected>소분류</option>
-                                            </select>
-                                            <svg class="w-3.5 h-3.5 text-[#531B75] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 3행: 태신자 성명 / 성별 -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 border-t border-dashed border-purple-200">
-                                    <div class="flex items-stretch gap-1.5">
-                                        <label for="visitorName" class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex flex-col items-center justify-center text-center leading-tight py-2 px-1">
-                                            <span>태신자</span>
-                                            <span>성명 <span class="text-rose-600">*</span></span>
-                                        </label>
-                                        <input type="text" id="visitorName" name="visitorName" required placeholder="예: 이믿음"
-                                            class="card-input flex-1 min-w-0 px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900">
-                                    </div>
-
-                                    <div class="flex items-stretch gap-1.5">
-                                        <span class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex items-center justify-center text-center py-2 px-1">
-                                            성별 <span class="text-rose-600 ml-0.5">*</span>
-                                        </span>
-                                        <div class="card-input flex-1 flex items-center justify-around px-2 py-2">
-                                            <label class="inline-flex items-center gap-2 cursor-pointer select-none px-2 py-1 rounded-lg hover:bg-purple-50">
-                                                <input type="radio" name="gender" value="남성" required class="w-4 h-4 accent-[#531B75] cursor-pointer">
-                                                <span class="text-sm font-bold text-slate-800">남</span>
-                                            </label>
-                                            <label class="inline-flex items-center gap-2 cursor-pointer select-none px-2 py-1 rounded-lg hover:bg-purple-50">
-                                                <input type="radio" name="gender" value="여성" class="w-4 h-4 accent-[#531B75] cursor-pointer">
-                                                <span class="text-sm font-bold text-slate-800">여</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 4행: 태신자 생년월일 / 태신자 연락처 -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                    <div class="flex items-stretch gap-1.5">
-                                        <label for="birthDate" class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex flex-col items-center justify-center text-center leading-tight py-2 px-1">
-                                            <span>태신자</span>
-                                            <span>생년월일 <span class="text-rose-600">*</span></span>
-                                        </label>
-                                        <input type="date" id="birthDate" name="birthDate" required max="2026-12-31"
-                                            class="card-input flex-1 min-w-0 px-2.5 py-2.5 text-xs sm:text-sm font-medium text-slate-900">
-                                    </div>
-
-                                    <div class="flex items-stretch gap-1.5">
-                                        <label for="phone" class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex items-center justify-center text-center py-2 px-1">
-                                            연락처 <span class="text-rose-600 ml-0.5">*</span>
-                                        </label>
-                                        <input type="tel" id="phone" name="phone" required inputmode="numeric" maxlength="13" placeholder="010-0000-0000"
-                                            class="card-input flex-1 min-w-0 px-3 py-2.5 text-sm font-medium text-slate-900 tracking-wide">
-                                    </div>
-                                </div>
-
-                                <!-- 5행: 작정일 -->
-                                <div class="flex items-stretch gap-1.5">
-                                    <label for="pledgeDate" class="w-20 sm:w-22 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex items-center justify-center text-center py-2 px-1">
-                                        작정일 <span class="text-rose-600 ml-0.5">*</span>
-                                    </label>
-                                    <input type="date" id="pledgeDate" name="pledgeDate" required
-                                        class="card-input flex-1 px-3 py-2.5 text-sm font-medium text-slate-900">
-                                </div>
-
-                                <!-- 6행: 기도제목 박스 (이미지 디자인 반영) -->
-                                <div class="rounded-xl border-2 border-[#9E7BB8] overflow-hidden bg-white mt-2">
-                                    <div class="bg-[#6B2D8F] text-white text-center font-bold text-sm py-1.5 tracking-wider">
-                                        기도제목
-                                    </div>
-                                    <textarea id="prayerTopic" name="prayerTopic" rows="3" placeholder="태신자를 위한 기도제목을 적어주세요. (선택 입력)"
-                                        class="w-full p-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none resize-none leading-relaxed"></textarea>
-                                </div>
-
-                                <!-- 개인정보 수집 및 이용 동의 -->
-                                <div class="rounded-xl bg-[#FAF5FF] border border-[#DFCEE9] p-3">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <label class="flex items-center gap-2.5 cursor-pointer select-none flex-1">
-                                            <input type="checkbox" id="privacyConsent" name="privacyConsent" required
-                                                class="w-4 h-4 rounded border-purple-300 accent-[#531B75] cursor-pointer">
-                                            <span class="text-xs sm:text-sm font-bold text-[#3D1159]">
-                                                [필수] 개인정보 수집 및 이용에 동의합니다.
-                                            </span>
-                                        </label>
-                                        <button type="button" id="togglePrivacyBtn" aria-expanded="false"
-                                            class="text-xs font-semibold text-[#531B75] hover:underline px-2 py-1 rounded-lg hover:bg-purple-100/70 transition shrink-0 cursor-pointer">
-                                            내용보기
-                                        </button>
-                                    </div>
-                                    <div id="privacyDetails" class="hidden mt-2.5 pt-2.5 border-t border-purple-200/70 text-xs text-slate-600 space-y-1 leading-relaxed">
-                                        <p><strong>1. 수집 목적:</strong> 태신자 등록 확인, 환영 안내 및 목양/행정 관리</p>
-                                        <p><strong>2. 수집 항목:</strong> 전도자 정보(성명, 생년월일, 소속), 태신자 정보(성명, 성별, 생년월일, 연락처, 작정일, 기도제목)</p>
-                                        <p><strong>3. 보유 기간:</strong> 수집 목적 달성 시 또는 등록 철회 요청 시까지 안전하게 보관 후 파기합니다.</p>
-                                    </div>
-                                </div>
-
-                                <!-- 제출 버튼 -->
-                                <button type="submit" id="submitBtn"
-                                    class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#531B75] to-[#6B2D8F] hover:from-[#3D1159] hover:to-[#531B75] active:scale-[0.99] text-white font-extrabold text-base shadow-lg shadow-purple-900/25 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                    <span id="submitBtnText">태신자 카드 제출하기</span>
-                                    <svg id="submitSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </button>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- [가운데 절취선] PC에서는 세로 가위선, 모바일에서는 가로 절취선 -->
-                    <div class="flex lg:flex-col items-center justify-center py-1 lg:py-4 lg:px-1 select-none shrink-0">
-                        <div class="flex-1 border-t-2 lg:border-t-0 lg:border-l-2 border-dashed border-slate-500/70"></div>
-                        <div class="px-2 py-1 lg:py-2 flex lg:flex-col items-center gap-1 text-slate-700 font-bold text-xs">
-                            <!-- 가위 SVG 아이콘 -->
-                            <svg class="w-4 h-4 text-slate-700 lg:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/>
-                            </svg>
-                            <span class="tracking-widest lg:[writing-mode:vertical-rl]">절취선</span>
-                        </div>
-                        <div class="flex-1 border-t-2 lg:border-t-0 lg:border-l-2 border-dashed border-slate-500/70"></div>
-                    </div>
-
-                    <!-- [오른쪽 / 하단] 전도자 기도 보관용 카드 (자동 연동 및 이미지 저장) -->
-                    <div class="lg:w-[38%] lg:pl-5 flex flex-col justify-between">
-                        <div id="prayerKeepCard" class="bg-white/95 rounded-2xl border-2 border-[#C4A3DB] shadow-md overflow-hidden">
-                            
-                            <!-- 곡선형 딥퍼플 헤더 바 ("전도자 기도 보관용") -->
-                            <div class="relative bg-[#F3E8FA] flex items-center justify-between pr-3">
-                                <div class="relative bg-[#531B75] text-white py-2.5 pl-4 pr-9 rounded-br-[36px] flex items-center gap-2 shadow-xs">
-                                    <!-- 기도하는 손 아이콘 SVG -->
-                                    <svg class="w-6 h-6 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v6m0 0l-3 5.5c-.6 1.1-.2 2.5.9 3.1L12 20l2.1-1.4c1.1-.6 1.5-2 .9-3.1L12 10z"/>
-                                    </svg>
-                                    <span class="text-base sm:text-lg font-extrabold tracking-tight">전도자 기도 보관용</span>
-                                </div>
-                            </div>
-                            <div class="bg-[#F3E8FA] px-4 py-1.5 text-center border-t border-purple-200/50">
-                                <p class="text-xs font-bold text-slate-800">이미지 저장 후 계속 기도해 주세요.</p>
-                            </div>
-
-                            <!-- 보관용 자동 반영 내용 -->
-                            <div class="p-4 sm:p-5 space-y-3.5">
-                                <div class="flex items-stretch gap-2">
-                                    <span class="w-24 shrink-0 bg-[#F3E8FA] text-[#3D1159] font-extrabold text-xs sm:text-sm rounded-xl flex items-center justify-center py-2.5 px-2">
-                                        태신자 성명
-                                    </span>
-                                    <div id="keepVisitorName" class="card-input flex-1 px-3.5 py-2.5 text-sm sm:text-base font-extrabold text-[#3D1159] flex items-center min-h-[44px]">
-                                        <span class="text-slate-400 font-normal text-xs">입력 시 자동 표시됩니다</span>
-                                    </div>
-                                </div>
-
-                                <div class="rounded-xl border-2 border-[#9E7BB8] overflow-hidden bg-white">
-                                    <div class="bg-[#6B2D8F] text-white text-center font-bold text-sm py-1.5 tracking-wider">
-                                        기도제목
-                                    </div>
-                                    <div id="keepPrayerTopic" class="p-3.5 min-h-[140px] lg:min-h-[210px] text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
-                                        <span class="text-slate-400 text-xs">작성하신 기도제목이 이곳에 함께 기록됩니다.</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between text-[11px] text-purple-900/70 font-semibold pt-1">
-                                    <span id="keepEvangelistInfo">전도자: -</span>
-                                    <span id="keepPledgeDate">작정일: -</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 기도 보관용 이미지 저장 버튼 & 하단 성경책 장식 -->
-                        <div class="mt-4 flex flex-col items-center">
-                            <button type="button" id="saveKeepCardBtn"
-                                class="w-full py-3 px-4 rounded-xl bg-white hover:bg-[#F3E8FA] text-[#531B75] border-2 border-[#531B75] font-extrabold text-xs sm:text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                <span>전도자 기도 보관용 이미지 저장</span>
-                            </button>
-
-                            <!-- 하단 펼쳐진 성경책과 새싹 일러스트 SVG -->
-                            <div class="mt-4 self-end pr-2 pointer-events-none select-none">
-                                <svg class="w-28 h-16 sm:w-32 sm:h-20" viewBox="0 0 140 80" fill="none">
-                                    <!-- 새싹 잎사귀 -->
-                                    <path d="M105 42C110 26 122 16 134 12" stroke="#65A30D" stroke-width="2.2" stroke-linecap="round"/>
-                                    <path d="M114 29C109 22 113 15 120 15C120 21 117 26 114 29Z" fill="#84CC16"/>
-                                    <path d="M123 21C119 14 123 8 130 8C130 14 127 18 123 21Z" fill="#65A30D"/>
-                                    <path d="M118 32C125 33 132 29 134 23C127 23 121 27 118 32Z" fill="#A3E635"/>
-                                    <!-- 성경책 표지 -->
-                                    <path d="M18 58L68 68L118 54L114 48L68 60L22 52L18 58Z" fill="#5B3A29"/>
-                                    <!-- 왼쪽 페이지 -->
-                                    <path d="M22 51C36 45 54 47 68 56L68 64C54 55 36 53 22 57V51Z" fill="#FFFDF7" stroke="#D6C7B2" stroke-width="1.2"/>
-                                    <path d="M22 51L32 34C44 30 58 33 68 41V56C56 48 40 46 22 51Z" fill="#FFFFFF" stroke="#D6C7B2" stroke-width="1.2"/>
-                                    <!-- 오른쪽 페이지 -->
-                                    <path d="M114 47C100 42 82 46 68 56L68 64C82 54 100 50 114 53V47Z" fill="#FFFDF7" stroke="#D6C7B2" stroke-width="1.2"/>
-                                    <path d="M114 47L102 31C90 28 77 32 68 41V56C80 47 96 44 114 47Z" fill="#FFFFFF" stroke="#D6C7B2" stroke-width="1.2"/>
-                                    <!-- 보라색 책갈피 리본 -->
-                                    <path d="M68 41L62 72L67 69L70 73L68 41Z" fill="#7E22CE"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </form>
-
-            <!-- 하단 금빛 & 보라빛 물결 장식 -->
-            <svg class="w-full h-7 sm:h-9 block pointer-events-none" viewBox="0 0 1200 60" preserveAspectRatio="none">
-                <path d="M0,25 C350,65 850,-15 1200,35 L1200,60 L0,60 Z" fill="#DFC7F2" fill-opacity="0.75"/>
-                <path d="M0,22 C350,62 850,-18 1200,32" fill="none" stroke="#D4A853" stroke-width="3.5"/>
-            </svg>
-        </div>
-
-        <!-- 카드 바깥 하단: 전도자별 등록 내역 조회 버튼 -->
-        <div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 px-2">
-            <span class="text-xs text-[#531B75]/80 font-medium">작성하신 내용은 교회 행정 및 중보기도를 위해 안전하게 보호됩니다.</span>
-            <button type="button" id="openMyLookupBtn"
-                class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white hover:bg-[#F3E8FA] text-[#3D1159] border border-[#C4A3DB] text-xs font-extrabold shadow-sm transition cursor-pointer">
-                <svg class="w-3.5 h-3.5 text-[#531B75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            <!-- 메인 타이틀 + 금빛 월계수 장식 -->
+            <div class="flex items-center justify-center gap-1.5 mt-1">
+                <h1 class="font-serif text-3xl sm:text-4xl lg:text-[42px] font-black text-[#3D1159] tracking-tight drop-shadow-sm">
+                    온라인 태신자 카드
+                </h1>
+                <!-- 금빛 나뭇잎 SVG -->
+                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#C99A2E] -mt-2" viewBox="0 0 36 36" fill="currentColor">
+                    <path d="M6 30C12 24 20 15 30 6C27 14 22 21 13 27L6 30Z" opacity="0.9"/>
+                    <path d="M13 22C11 17 13 12 17 9C17 14 16 18 13 22Z"/>
+                    <path d="M20 16C19 11 21 7 25 5C25 9 23 13 20 16Z"/>
+                    <path d="M17 24C22 25 26 23 29 19C24 20 20 21 17 24Z"/>
                 </svg>
-                <span>전도자별 등록 내역 조회</span>
+            </div>
+
+            <!-- 슬로건 -->
+            <div class="flex items-center justify-center gap-3 mt-2.5">
+                <span class="h-[1px] w-8 sm:w-14 bg-gradient-to-r from-transparent to-[#C99A2E]"></span>
+                <p class="text-xs sm:text-sm font-bold text-[#4A2563] tracking-wide">
+                    성령의 바람으로, 다시 타오르는 부흥의 불길
+                </p>
+                <span class="h-[1px] w-8 sm:w-14 bg-gradient-to-l from-transparent to-[#C99A2E]"></span>
+            </div>
+        </header>
+
+        <!-- 알림 배너 (성공/경고 메시지용) -->
+        <div id="statusBanner" class="hidden relative z-20 mx-5 sm:mx-8 mb-3 p-3.5 rounded-2xl border text-xs sm:text-sm font-semibold flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-2">
+                <span id="statusIcon"></span>
+                <span id="statusText"></span>
+            </div>
+            <button type="button" id="closeBannerBtn" class="opacity-70 hover:opacity-100 p-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
 
+        <!-- 메인 폼 컨테이너 (PC: 좌측 교회 제출용 / 가운데 절취선 / 우측 전도자 기도 보관용) -->
+        <form id="registrationForm" novalidate class="relative z-10 px-4 sm:px-7 pb-6">
+            <div class="flex flex-col lg:flex-row items-stretch gap-5 lg:gap-0">
+                
+                <!-- ==========================================
+                     [좌측 / 상단] 교회 제출용 카드 영역
+                =========================================== -->
+                <div class="flex-1 lg:pr-5">
+                    <div class="bg-white/95 rounded-[22px] border-[1.5px] border-[#C4A3DB] shadow-md shadow-purple-900/5 overflow-hidden">
+                        
+                        <!-- 곡선형 헤더 바 -->
+                        <div class="bg-[#EFE3F7] flex items-center justify-between pr-3 sm:pr-4">
+                            <div class="section-tab-header px-4 sm:px-5 py-2.5 flex items-center gap-2 text-white shadow-sm">
+                                <!-- 교회 아이콘 SVG -->
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2v3m-1.5-1.5h3M12 5L5 10v11h14V10l-7-5zM9 21v-5a3 3 0 016 0v5"/>
+                                </svg>
+                                <span class="text-base sm:text-lg font-extrabold tracking-tight">교회 제출용</span>
+                            </div>
+                            <span class="text-[11px] sm:text-xs font-bold text-[#3D1159]">작성 후 저장 또는 제출해 주세요.</span>
+                        </div>
+
+                        <!-- 입력 필드 그리드 영역 -->
+                        <div class="p-3.5 sm:p-4 space-y-2.5">
+                            
+                            <!-- 1행: 전도자 성명 + 전도자 생년월일 -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <!-- 전도자 성명 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                    <label for="evangelistName" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                        <span>전도자</span>
+                                        <span>성명 <span class="text-rose-600">*</span></span>
+                                    </label>
+                                    <input type="text" id="evangelistName" name="evangelistName" required placeholder="성함 입력" class="card-input font-semibold">
+                                </div>
+
+                                <!-- 전도자 생년월일 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                    <label for="evangelistBirthDate" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                        <span>전도자</span>
+                                        <span>생년월일 <span class="text-rose-600">*</span></span>
+                                    </label>
+                                    <input type="date" id="evangelistBirthDate" name="evangelistBirthDate" required class="card-input text-xs sm:text-sm">
+                                </div>
+                            </div>
+
+                            <!-- 2행: 전도자 소속 (대분류 · 중분류 · 소분류 3단계 드롭다운) -->
+                            <div class="flex flex-col sm:flex-row items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden">
+                                <label for="evangelistCategory1" class="sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs py-2 sm:py-0 flex items-center justify-center text-center px-1 border-b sm:border-b-0 sm:border-r border-[#D5BBE8]">
+                                    소속 <span class="text-rose-600 ml-0.5">*</span>
+                                </label>
+                                <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#E3D0F0]">
+                                    <select id="evangelistCategory1" name="evangelistCategory1" required
+                                        class="w-full h-10 sm:h-11 px-2.5 text-xs font-semibold text-slate-800 bg-transparent focus:bg-purple-50/40 outline-none cursor-pointer">
+                                        <option value="">대분류 선택</option>
+                                        <option value="대교구">대교구</option>
+                                        <option value="지성전">지성전</option>
+                                        <option value="준교구">준교구</option>
+                                    </select>
+                                    <select id="evangelistCategory2" name="evangelistCategory2" required disabled
+                                        class="w-full h-10 sm:h-11 px-2.5 text-xs font-semibold text-slate-800 bg-slate-50/60 disabled:text-slate-400 focus:bg-purple-50/40 outline-none cursor-pointer disabled:cursor-not-allowed">
+                                        <option value="">중분류 선택</option>
+                                    </select>
+                                    <select id="evangelistCategory3" name="evangelistCategory3" required disabled
+                                        class="w-full h-10 sm:h-11 px-2.5 text-xs font-semibold text-slate-800 bg-slate-50/60 disabled:text-slate-400 focus:bg-purple-50/40 outline-none cursor-pointer disabled:cursor-not-allowed">
+                                        <option value="">소분류 선택</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 3행: 태신자 성명 + 성별(남/여 체크박스 스타일) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <!-- 태신자 성명 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                    <label for="visitorName" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                        <span>태신자</span>
+                                        <span>성명 <span class="text-rose-600">*</span></span>
+                                    </label>
+                                    <input type="text" id="visitorName" name="visitorName" required placeholder="태신자 성함 입력" class="card-input font-bold text-[#3D1159]">
+                                </div>
+
+                                <!-- 성별 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                    <span class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                        성별 <span class="text-rose-600 ml-0.5">*</span>
+                                    </span>
+                                    <div class="flex-1 flex items-center justify-around px-2">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer select-none py-1 px-2 rounded-lg hover:bg-purple-50 transition">
+                                            <input type="radio" name="gender" value="남성" class="w-4 h-4 accent-[#531B75] rounded" required>
+                                            <span class="text-xs sm:text-sm font-bold text-slate-800">남</span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer select-none py-1 px-2 rounded-lg hover:bg-purple-50 transition">
+                                            <input type="radio" name="gender" value="여성" class="w-4 h-4 accent-[#531B75] rounded">
+                                            <span class="text-xs sm:text-sm font-bold text-slate-800">여</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4행: 태신자 생년월일 + 연락처 -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <!-- 태신자 생년월일 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                    <label for="birthDate" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                        <span>태신자</span>
+                                        <span>생년월일 <span class="text-rose-600">*</span></span>
+                                    </label>
+                                    <input type="date" id="birthDate" name="birthDate" required class="card-input text-xs sm:text-sm">
+                                </div>
+
+                                <!-- 연락처 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                    <label for="phone" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                        연락처 <span class="text-rose-600 ml-0.5">*</span>
+                                    </label>
+                                    <input type="tel" id="phone" name="phone" required maxlength="13" inputmode="numeric" placeholder="010-0000-0000" class="card-input font-medium">
+                                </div>
+                            </div>
+
+                            <!-- 5행: 작정일 -->
+                            <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                <label for="pledgeDate" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
+                                    작정일 <span class="text-rose-600 ml-0.5">*</span>
+                                </label>
+                                <input type="date" id="pledgeDate" name="pledgeDate" required class="card-input font-medium">
+                            </div>
+
+                            <!-- 6행: 기도제목 대형 박스 -->
+                            <div class="rounded-2xl border border-[#B996D4] bg-white overflow-hidden">
+                                <div class="bg-[#5E2282] text-white text-center font-extrabold text-sm py-1.5 tracking-wider">
+                                    기 도 제 목
+                                </div>
+                                <textarea id="prayerTopic" name="prayerTopic" rows="3" placeholder="태신자를 위한 기도제목을 자유롭게 적어주세요. (입력 시 오른쪽 '전도자 기도 보관용' 카드에도 자동으로 함께 기재됩니다)"
+                                    class="w-full p-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none resize-none leading-relaxed"></textarea>
+                            </div>
+
+                            <!-- 개인정보 수집 및 이용 동의 -->
+                            <div class="rounded-xl bg-[#F8F2FC] border border-[#DFC8F0] px-3 py-2.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                                        <input type="checkbox" id="privacyConsent" name="privacyConsent" required
+                                            class="w-4 h-4 rounded border-purple-300 accent-[#531B75] cursor-pointer">
+                                        <span class="text-xs font-bold text-[#3D1159]">
+                                            [필수] 개인정보 수집 및 이용 동의
+                                        </span>
+                                    </label>
+                                    <button type="button" id="togglePrivacyBtn" class="text-[11px] font-semibold text-[#6B2791] underline underline-offset-2 hover:text-[#3D1159]">
+                                        내용보기
+                                    </button>
+                                </div>
+                                <div id="privacyDetails" class="hidden mt-2 pt-2 border-t border-purple-200/70 text-[11px] text-slate-600 leading-relaxed">
+                                    • 수집항목: 전도자(성명, 생년월일, 소속), 태신자(성명, 성별, 생년월일, 연락처, 기도제목)<br>
+                                    • 이용목적: 태신자 작정 등록, 중보기도 및 새신자 안내 연락<br>
+                                    • 보유기간: 사역 목적 달성 시 또는 철회 요청 시 즉시 파기
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     [가운데] PC 전용 가위 절취선
+                =========================================== -->
+                <div class="hidden lg:flex flex-col items-center justify-between py-2 select-none text-[#531B75]" aria-hidden="true">
+                    <div class="w-[1.5px] flex-1 border-l-2 border-dashed border-[#8E5BB0]"></div>
+                    <div class="my-2 flex flex-col items-center gap-1">
+                        <!-- 가위 SVG -->
+                        <svg class="w-5 h-5 text-[#531B75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="6" cy="6" r="3" stroke-width="2"/>
+                            <circle cx="6" cy="18" r="3" stroke-width="2"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/>
+                        </svg>
+                        <span class="text-[11px] font-extrabold tracking-widest [writing-mode:vertical-rl]">절취선</span>
+                    </div>
+                    <div class="w-[1.5px] flex-1 border-l-2 border-dashed border-[#8E5BB0]"></div>
+                </div>
+
+                <!-- ==========================================
+                     [우측 / 하단] 전도자 기도 보관용 카드 영역
+                =========================================== -->
+                <div class="w-full lg:w-[360px] shrink-0 lg:pl-5 flex flex-col justify-between">
+                    
+                    <!-- 이미지 캡처 대상 영역 (#keeperCardCapture) -->
+                    <div id="keeperCardCapture" class="bg-white/95 rounded-[22px] border-[1.5px] border-[#C4A3DB] shadow-md shadow-purple-900/5 overflow-hidden">
+                        
+                        <!-- 곡선형 헤더 바 -->
+                        <div class="bg-[#EFE3F7] flex items-center justify-between pr-3">
+                            <div class="section-tab-header px-4 py-2.5 flex items-center gap-2 text-white shadow-sm">
+                                <!-- 기도하는 손 아이콘 SVG -->
+                                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v8m0 0l-4 4v4h8v-4l-4-4zm-4 4l-2-3m10 3l2-3"/>
+                                </svg>
+                                <span class="text-base sm:text-lg font-extrabold tracking-tight">전도자 기도 보관용</span>
+                            </div>
+                        </div>
+                        <div class="bg-[#EFE3F7]/70 text-center py-1.5 px-3 border-b border-purple-100">
+                            <span class="text-[11px] font-bold text-[#3D1159]">이미지 저장 후 계속 기도해 주세요.</span>
+                        </div>
+
+                        <div class="p-3.5 sm:p-4 space-y-3">
+                            <!-- 태신자 성명 자동 동기화 표시 -->
+                            <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
+                                <span class="w-24 shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-2 border-r border-[#D5BBE8]">
+                                    태신자 성명
+                                </span>
+                                <div id="mirrorVisitorName" class="flex-1 px-3 flex items-center text-sm font-extrabold text-[#3D1159]">
+                                    <span class="text-slate-400 font-normal text-xs">작성 시 자동 입력됩니다</span>
+                                </div>
+                            </div>
+
+                            <!-- 기도제목 자동 동기화 박스 -->
+                            <div class="rounded-2xl border border-[#B996D4] bg-white overflow-hidden">
+                                <div class="bg-[#5E2282] text-white text-center font-extrabold text-sm py-1.5 tracking-wider">
+                                    기 도 제 목
+                                </div>
+                                <div id="mirrorPrayerTopic" class="p-3.5 min-h-[140px] lg:min-h-[215px] text-xs sm:text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                                    <span class="text-slate-400 text-xs">왼쪽 기도제목을 입력하시면 기도 보관용 카드에도 함께 표시됩니다.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 카드 하단 버튼 그룹 (제출하기 + 기도 카드 이미지 저장 + 내 등록 조회) -->
+                    <div class="mt-4 space-y-2.5">
+                        <button type="submit" id="submitBtn"
+                            class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-[#531B75] to-[#7429A3] hover:from-[#431361] hover:to-[#5F1F87] text-white font-extrabold text-sm sm:text-base shadow-lg shadow-purple-900/25 transition active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>
+                            <span>태신자 카드 교회 제출하기</span>
+                        </button>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="saveKeeperImageBtn"
+                                class="py-2.5 px-3 rounded-xl bg-white/95 hover:bg-purple-50 border border-[#B996D4] text-[#4A1969] font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4 text-[#6B2791] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                <span>기도보관용 이미지 저장</span>
+                            </button>
+
+                            <button type="button" id="openMyLookupBtn"
+                                class="py-2.5 px-3 rounded-xl bg-white/95 hover:bg-purple-50 border border-[#B996D4] text-[#4A1969] font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4 text-[#6B2791] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <span>전도자별 등록 조회</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+        <!-- 하단 금빛 & 보라빛 물결 + 성경책 일러스트 장식 -->
+        <div class="relative h-14 sm:h-16 pointer-events-none select-none overflow-hidden">
+            <svg class="w-full h-full" viewBox="0 0 1000 80" preserveAspectRatio="none">
+                <path d="M0,35 Q300,75 650,25 T1000,45 L1000,80 L0,80 Z" fill="#DFC3F0" opacity="0.75"/>
+                <path d="M0,45 Q320,80 680,22 T1000,40" fill="none" stroke="#C99A2E" stroke-width="3" opacity="0.85"/>
+            </svg>
+            <!-- 우측 하단 펼친 성경책과 새싹 SVG -->
+            <svg class="w-24 h-16 sm:w-28 sm:h-20 absolute right-4 sm:right-8 bottom-0" viewBox="0 0 120 80" fill="none">
+                <!-- 초록 새싹 줄기 -->
+                <path d="M88 45C92 32 98 22 106 15" stroke="#5C8D3E" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M94 33C86 30 82 23 85 18C91 20 94 26 94 33Z" fill="#7CB342"/>
+                <path d="M99 24C106 20 112 22 114 27C108 29 102 28 99 24Z" fill="#689F38"/>
+                <path d="M103 17C102 10 107 6 112 7C112 13 108 16 103 17Z" fill="#8BC34A"/>
+                <!-- 펼친 성경책 표지 -->
+                <path d="M18 62L58 70L98 60L94 42L58 50L22 42L18 62Z" fill="#6D4C41"/>
+                <!-- 왼쪽 페이지 -->
+                <path d="M23 41C35 39 48 42 58 49V66C48 60 35 57 22 59L23 41Z" fill="#FFFDF7" stroke="#D7CCC8" stroke-width="1"/>
+                <!-- 오른쪽 페이지 -->
+                <path d="M93 41C81 39 68 42 58 49V66C68 60 81 57 94 59L93 41Z" fill="#FFF8E7" stroke="#D7CCC8" stroke-width="1"/>
+                <!-- 보라색 책갈피 리본 -->
+                <path d="M58 49L63 74L59 71L56 75L58 49Z" fill="#7B1FA2"/>
+            </svg>
+        </div>
     </div>
 
-    <!-- 전도자 등록 내역 조회 모달 -->
-    <div id="myLookupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/50 backdrop-blur-xs">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border-2 border-[#C4A3DB] max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between pb-4 border-b border-purple-100 shrink-0">
+    <!-- 전도자별 등록 내역 통합 조회 모달 팝업 -->
+    <div id="myLookupModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full max-h-[88vh] flex flex-col shadow-2xl border border-purple-200 overflow-hidden">
+            
+            <!-- 모달 헤더 -->
+            <div class="px-6 py-4 bg-[#FAF5FF] border-b border-purple-100 flex items-center justify-between shrink-0">
                 <div>
-                    <h3 class="text-lg font-extrabold text-[#3D1159]">전도자 등록 내역 조회</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">전도자 성명, 생년월일, 소속 부서를 입력하시면 등록한 태신자 명단을 한 번에 볼 수 있습니다.</p>
+                    <h3 class="text-base sm:text-lg font-extrabold text-[#3D1159]">전도자별 태신자 등록 조회</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">전도자 성명·생년월일·소속을 입력하시면 등록하신 모든 태신자를 확인할 수 있습니다.</p>
                 </div>
-                <button type="button" id="closeMyLookupBtn" class="p-2 rounded-xl text-slate-400 hover:text-[#531B75] hover:bg-purple-50 transition cursor-pointer">
+                <button type="button" id="closeMyLookupBtn" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-purple-100/60 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
-            <!-- 전도자 확인 입력 폼 -->
-            <form id="myLookupForm" class="mt-4 space-y-3 shrink-0">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div>
-                        <label for="lookupEvangelistName" class="block text-xs font-bold text-[#3D1159] mb-1">전도자 성명</label>
-                        <input type="text" id="lookupEvangelistName" required placeholder="예: 김은혜"
-                            class="card-input w-full px-3.5 py-2.5 text-sm text-slate-900">
+            <!-- 조회 입력 폼 및 결과 영역 -->
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-5">
+                <form id="myLookupForm" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="lookupEvangelistName" class="block text-xs font-bold text-[#3D1159] mb-1">전도자 성명</label>
+                            <input type="text" id="lookupEvangelistName" required placeholder="예: 김은혜"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-purple-200 bg-purple-50/30 focus:bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-[#531B75] transition">
+                        </div>
+                        <div>
+                            <label for="lookupEvangelistBirthDate" class="block text-xs font-bold text-[#3D1159] mb-1">전도자 생년월일</label>
+                            <input type="date" id="lookupEvangelistBirthDate" required
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-purple-200 bg-purple-50/30 focus:bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-[#531B75] transition">
+                        </div>
                     </div>
+
                     <div>
-                        <label for="lookupEvangelistBirthDate" class="block text-xs font-bold text-[#3D1159] mb-1">전도자 생년월일</label>
-                        <input type="date" id="lookupEvangelistBirthDate" required max="2026-12-31"
-                            class="card-input w-full px-3.5 py-2.5 text-sm text-slate-900">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-[#3D1159] mb-1">소속 (대분류 / 중분류 / 소분류)</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <div class="relative">
-                            <select id="lookupCategory1" required
-                                class="card-input w-full px-3 py-2.5 pr-7 text-xs sm:text-sm text-slate-900 appearance-none cursor-pointer">
-                                <option value="" disabled selected>대분류</option>
+                        <label for="lookupEvangelistCategory1" class="block text-xs font-bold text-[#3D1159] mb-1">전도자 소속</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <select id="lookupEvangelistCategory1" required
+                                class="w-full px-3 py-2.5 rounded-xl border border-purple-200 bg-purple-50/30 focus:bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-[#531B75] transition cursor-pointer">
+                                <option value="">대분류</option>
                                 <option value="대교구">대교구</option>
                                 <option value="지성전">지성전</option>
                                 <option value="준교구">준교구</option>
                             </select>
-                            <svg class="w-3.5 h-3.5 text-[#531B75] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                        <div class="relative">
-                            <select id="lookupCategory2" required disabled
-                                class="card-input w-full px-3 py-2.5 pr-7 text-xs sm:text-sm text-slate-900 appearance-none cursor-pointer disabled:cursor-not-allowed">
-                                <option value="" disabled selected>중분류</option>
+                            <select id="lookupEvangelistCategory2" required disabled
+                                class="w-full px-3 py-2.5 rounded-xl border border-purple-200 bg-slate-100 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-[#531B75] transition cursor-pointer disabled:text-slate-400 disabled:cursor-not-allowed">
+                                <option value="">중분류</option>
                             </select>
-                            <svg class="w-3.5 h-3.5 text-[#531B75] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                        <div class="relative">
-                            <select id="lookupCategory3" required disabled
-                                class="card-input w-full px-3 py-2.5 pr-7 text-xs sm:text-sm text-slate-900 appearance-none cursor-pointer disabled:cursor-not-allowed">
-                                <option value="" disabled selected>소분류</option>
+                            <select id="lookupEvangelistCategory3" required disabled
+                                class="w-full px-3 py-2.5 rounded-xl border border-purple-200 bg-slate-100 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-[#531B75] transition cursor-pointer disabled:text-slate-400 disabled:cursor-not-allowed">
+                                <option value="">소분류</option>
                             </select>
-                            <svg class="w-3.5 h-3.5 text-[#531B75] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
-                </div>
-                <button type="submit"
-                    class="w-full py-3 px-4 rounded-xl bg-[#531B75] hover:bg-[#3D1159] text-white font-bold text-sm transition cursor-pointer">
-                    내 작정 명단 조회하기
-                </button>
-            </form>
 
-            <!-- 조회 결과 출력 영역 -->
-            <div id="myLookupResult" class="mt-4 overflow-y-auto flex-1 space-y-3">
-                <div class="text-center py-6 text-xs text-slate-400 bg-[#FAF5FF] rounded-2xl border border-purple-100">
-                    전도자 성명, 생년월일, 소속 부서를 입력하시면 등록하신 태신자 명단이 모두 조회됩니다.
-                </div>
-            </div>
-        </div>
-    </div>
+                    <button type="submit" id="myLookupSubmitBtn"
+                        class="w-full py-3 px-4 rounded-xl bg-[#531B75] hover:bg-[#3F125B] text-white font-bold text-sm transition cursor-pointer shadow-sm">
+                        등록한 태신자 명단 조회하기
+                    </button>
+                </form>
 
-    <!-- 등록 완료 축하 모달 -->
-    <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/50 backdrop-blur-xs">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-7 text-center shadow-2xl border-2 border-[#C4A3DB]">
-            <div class="w-14 h-14 rounded-full bg-[#F3E8FA] text-[#531B75] flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <!-- 조회 결과 출력 영역 -->
+                <div id="myLookupResult" class="hidden pt-4 border-t border-purple-100"></div>
             </div>
-            <h3 class="text-xl font-extrabold text-[#3D1159]">태신자 카드가 제출되었습니다!</h3>
-            <p id="modalSummaryText" class="text-sm text-slate-600 mt-2 leading-relaxed"></p>
-            <button type="button" id="closeSuccessBtn"
-                class="mt-6 w-full py-3.5 px-5 rounded-xl bg-[#531B75] hover:bg-[#3D1159] text-white font-bold text-sm transition cursor-pointer">
-                확인
-            </button>
+
         </div>
     </div>
 
     <script>
         (function() {
-            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec';
             const STORAGE_KEY = 'visitor_registration_records_v1';
-            let registeredRecords = [];
+            // 구글 스프레드시트(Apps Script) 웹 앱 URL을 아래 작은따옴표 안에 붙여넣으세요.
+            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec';
 
             // 소속 3단계 계층 데이터 정의
-            const AFFILIATION_DATA = {
+            const GROUP_HIERARCHY = {
                 '대교구': {
-                    sub2: [
+                    subCategories: [
                         '강서1대교구', '강서2대교구', '관악대교구', '구로대교구', '금천대교구',
                         '동작대교구', '마포1대교구', '마포2대교구', '반석대교구', '서대문대교구',
                         '양천대교구', '영등포대교구', '용산대교구', '은평대교구', '종로중구대교구',
                         '장애인대교구', '찬양특별교구', '직능전문인대교구', '통일선교회'
                     ],
-                    getSub3: () => Array.from({ length: 15 }, (_, i) => `${i + 1}교구`)
+                    getLeafOptions: function() {
+                        const list = [];
+                        for (let i = 1; i <= 15; i++) {
+                            list.push(`${i}교구`);
+                        }
+                        return list;
+                    }
                 },
                 '지성전': {
-                    sub2: [
+                    subCategories: [
                         '강서성전', '남대문성전', '동작성전', '서대문성전', '양서성전',
                         '여의도직할성전', '용산성전', '은평성전', '기도원'
                     ],
-                    getSub3: () => ['1교구', '2교구', '3교구', '4교구', '교회학교', '대학청년부']
+                    getLeafOptions: function() {
+                        return ['1교구', '2교구', '3교구', '4교구', '교회학교', '대학청년부'];
+                    }
                 },
                 '준교구': {
-                    sub2: ['교회학교', '대학청장년국'],
-                    getSub3: (selectedSub2) => {
-                        if (selectedSub2 === '교회학교') {
+                    subCategories: ['교회학교', '대학청장년국'],
+                    getLeafOptions: function(subVal) {
+                        if (subVal === '교회학교') {
                             return ['유아부', '영아부', '유치부', '초등부', '중등부', '고등부'];
                         }
-                        if (selectedSub2 === '대학청장년국') {
+                        if (subVal === '대학청장년국') {
                             return ['비전브릿지선교회', '프뉴마선교회', '가스펠선교회', '카리스선교회', '그레이스선교회'];
                         }
                         return [];
@@ -570,152 +514,17 @@
                 }
             };
 
-            function setupCascadingSelects(cat1Id, cat2Id, cat3Id, defaultLabels) {
-                const cat1 = document.getElementById(cat1Id);
-                const cat2 = document.getElementById(cat2Id);
-                const cat3 = document.getElementById(cat3Id);
-                if (!cat1 || !cat2 || !cat3) return;
-
-                const resetSelect = (selectEl, placeholderText) => {
-                    selectEl.innerHTML = `<option value="" disabled selected>${placeholderText}</option>`;
-                    selectEl.disabled = true;
-                };
-
-                cat1.addEventListener('change', () => {
-                    const val1 = cat1.value;
-                    resetSelect(cat2, defaultLabels.sub2);
-                    resetSelect(cat3, defaultLabels.sub3);
-
-                    if (val1 && AFFILIATION_DATA[val1]) {
-                        AFFILIATION_DATA[val1].sub2.forEach(item => {
-                            const opt = document.createElement('option');
-                            opt.value = item;
-                            opt.textContent = item;
-                            cat2.appendChild(opt);
-                        });
-                        cat2.disabled = false;
-                    }
-                });
-
-                cat2.addEventListener('change', () => {
-                    const val1 = cat1.value;
-                    const val2 = cat2.value;
-                    resetSelect(cat3, defaultLabels.sub3);
-
-                    if (val1 && val2 && AFFILIATION_DATA[val1]) {
-                        const sub3List = AFFILIATION_DATA[val1].getSub3(val2);
-                        sub3List.forEach(item => {
-                            const opt = document.createElement('option');
-                            opt.value = item;
-                            opt.textContent = item;
-                            cat3.appendChild(opt);
-                        });
-                        cat3.disabled = false;
-                    }
-                });
-            }
-
-            // 입력 내용을 오른쪽/하단 '전도자 기도 보관용' 카드에 실시간 반영
-            function setupPrayerKeepSync() {
-                const visitorInput = document.getElementById('visitorName');
-                const prayerInput = document.getElementById('prayerTopic');
-                const evInput = document.getElementById('evangelistName');
-                const dateInput = document.getElementById('pledgeDate');
-
-                const keepVisitorEl = document.getElementById('keepVisitorName');
-                const keepPrayerEl = document.getElementById('keepPrayerTopic');
-                const keepEvEl = document.getElementById('keepEvangelistInfo');
-                const keepDateEl = document.getElementById('keepPledgeDate');
-
-                const updatePreview = () => {
-                    const vName = visitorInput?.value.trim();
-                    const pText = prayerInput?.value.trim();
-                    const eName = evInput?.value.trim();
-                    const pDate = dateInput?.value;
-
-                    if (keepVisitorEl) {
-                        keepVisitorEl.innerHTML = vName
-                            ? `<span>${escapeHTML(vName)}</span>`
-                            : `<span class="text-slate-400 font-normal text-xs">입력 시 자동 표시됩니다</span>`;
-                    }
-                    if (keepPrayerEl) {
-                        keepPrayerEl.innerHTML = pText
-                            ? `<span>${escapeHTML(pText)}</span>`
-                            : `<span class="text-slate-400 text-xs">작성하신 기도제목이 이곳에 함께 기록됩니다.</span>`;
-                    }
-                    if (keepEvEl) {
-                        keepEvEl.textContent = `전도자: ${eName || '-'}`;
-                    }
-                    if (keepDateEl) {
-                        keepDateEl.textContent = `작정일: ${pDate || '-'}`;
-                    }
-                };
-
-                [visitorInput, prayerInput, evInput, dateInput].forEach(el => {
-                    if (el) el.addEventListener('input', updatePreview);
-                });
-                updatePreview();
-            }
-
-            // '전도자 기도 보관용' 카드를 PNG 이미지로 다운로드
-            function setupSaveKeepCardImage() {
-                const saveBtn = document.getElementById('saveKeepCardBtn');
-                const targetCard = document.getElementById('prayerKeepCard');
-                if (!saveBtn || !targetCard) return;
-
-                saveBtn.addEventListener('click', async () => {
-                    const vName = document.getElementById('visitorName')?.value.trim() || '태신자';
-                    if (typeof html2canvas === 'undefined') {
-                        showFeedback('error', '이미지 저장 안내', '이미지 변환 도구를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
-                        return;
-                    }
-
-                    const originalText = saveBtn.innerHTML;
-                    saveBtn.disabled = true;
-                    saveBtn.textContent = '이미지 생성 중...';
-
-                    try {
-                        const canvas = await html2canvas(targetCard, {
-                            scale: 2,
-                            backgroundColor: '#FFFFFF',
-                            useCORS: true
-                        });
-                        const dataUrl = canvas.toDataURL('image/png');
-                        const link = document.createElement('a');
-                        link.href = dataUrl;
-                        link.download = `전도자기도보관용_${vName}.png`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        showFeedback('success', '이미지 저장 완료', `'전도자기도보관용_${vName}.png' 파일이 저장되었습니다.`);
-                    } catch (err) {
-                        console.error('이미지 저장 실패:', err);
-                        showFeedback('error', '저장 오류', '이미지 저장 중 문제가 발생했습니다. 화면 캡처를 이용해 주세요.');
-                    } finally {
-                        saveBtn.disabled = false;
-                        saveBtn.innerHTML = originalText;
-                    }
-                });
-            }
-
             function initApp() {
                 setTodayDate();
-                loadStoredRecords();
-                setupCascadingSelects('evangelistCategory1', 'evangelistCategory2', 'evangelistCategory3', {
-                    sub2: '중분류',
-                    sub3: '소분류'
-                });
-                setupCascadingSelects('lookupCategory1', 'lookupCategory2', 'lookupCategory3', {
-                    sub2: '중분류',
-                    sub3: '소분류'
-                });
+                setupCascadingSelects('evangelistCategory1', 'evangelistCategory2', 'evangelistCategory3');
+                setupCascadingSelects('lookupEvangelistCategory1', 'lookupEvangelistCategory2', 'lookupEvangelistCategory3');
                 setupPhoneFormatter();
                 setupPrivacyAccordion();
-                setupPrayerKeepSync();
-                setupSaveKeepCardImage();
-                setupFormSubmission();
+                setupCardMirroring();
+                setupKeeperImageDownload();
+                setupFormSubmit();
                 setupMyLookup();
-                setupButtonEvents();
+                setupBannerClose();
             }
 
             if (document.readyState === 'loading') {
@@ -724,168 +533,274 @@
                 initApp();
             }
 
-            function setupButtonEvents() {
-                const closeFeedbackBtn = document.getElementById('closeFeedbackBtn');
-                const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-                const openMyLookupBtn = document.getElementById('openMyLookupBtn');
-                const closeMyLookupBtn = document.getElementById('closeMyLookupBtn');
-
-                if (closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', hideFeedback);
-                if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeSuccessModal);
-                if (openMyLookupBtn) openMyLookupBtn.addEventListener('click', openMyLookupModal);
-                if (closeMyLookupBtn) closeMyLookupBtn.addEventListener('click', closeMyLookupModal);
-            }
-
+            // 1. 작정일 오늘 날짜 기본 설정
             function setTodayDate() {
-                const pledgeDateInput = document.getElementById('pledgeDate');
-                if (!pledgeDateInput) return;
+                const pledgeInput = document.getElementById('pledgeDate');
+                if (!pledgeInput) return;
                 const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-                pledgeDateInput.value = `${year}-${month}-${day}`;
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                pledgeInput.value = `${yyyy}-${mm}-${dd}`;
             }
 
-            function formatPhoneDigits(value) {
-                const digits = String(value || '').replace(/\D/g, '').slice(0, 11);
-                if (digits.length <= 3) return digits;
-                if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-                return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+            // 2. 소속 대분류 -> 중분류 -> 소분류 3단계 드롭다운 연동
+            function setupCascadingSelects(cat1Id, cat2Id, cat3Id) {
+                const cat1 = document.getElementById(cat1Id);
+                const cat2 = document.getElementById(cat2Id);
+                const cat3 = document.getElementById(cat3Id);
+                if (!cat1 || !cat2 || !cat3) return;
+
+                cat1.addEventListener('change', () => {
+                    const val1 = cat1.value;
+                    cat2.innerHTML = '<option value="">중분류 선택</option>';
+                    cat3.innerHTML = '<option value="">소분류 선택</option>';
+                    cat3.disabled = true;
+                    cat3.classList.add('bg-slate-50/60', 'bg-slate-100');
+
+                    if (!val1 || !GROUP_HIERARCHY[val1]) {
+                        cat2.disabled = true;
+                        cat2.classList.add('bg-slate-50/60', 'bg-slate-100');
+                        return;
+                    }
+
+                    GROUP_HIERARCHY[val1].subCategories.forEach(sub => {
+                        const opt = document.createElement('option');
+                        opt.value = sub;
+                        opt.textContent = sub;
+                        cat2.appendChild(opt);
+                    });
+
+                    cat2.disabled = false;
+                    cat2.classList.remove('bg-slate-50/60', 'bg-slate-100');
+                });
+
+                cat2.addEventListener('change', () => {
+                    const val1 = cat1.value;
+                    const val2 = cat2.value;
+                    cat3.innerHTML = '<option value="">소분류 선택</option>';
+
+                    if (!val1 || !val2 || !GROUP_HIERARCHY[val1]) {
+                        cat3.disabled = true;
+                        cat3.classList.add('bg-slate-50/60', 'bg-slate-100');
+                        return;
+                    }
+
+                    const leafOptions = GROUP_HIERARCHY[val1].getLeafOptions(val2);
+                    leafOptions.forEach(leaf => {
+                        const opt = document.createElement('option');
+                        opt.value = leaf;
+                        opt.textContent = leaf;
+                        cat3.appendChild(opt);
+                    });
+
+                    cat3.disabled = false;
+                    cat3.classList.remove('bg-slate-50/60', 'bg-slate-100');
+                });
             }
 
+            // 3. 연락처 자동 하이픈 포맷팅
             function setupPhoneFormatter() {
                 const phoneInput = document.getElementById('phone');
-                if (phoneInput) {
-                    phoneInput.addEventListener('input', (e) => {
-                        e.target.value = formatPhoneDigits(e.target.value);
-                    });
-                }
-            }
+                if (!phoneInput) return;
 
-            function setupPrivacyAccordion() {
-                const toggleBtn = document.getElementById('togglePrivacyBtn');
-                const detailsBox = document.getElementById('privacyDetails');
-                if (!toggleBtn || !detailsBox) return;
+                phoneInput.addEventListener('input', (e) => {
+                    let numbers = e.target.value.replace(/[^0-9]/g, '');
+                    if (numbers.length > 11) numbers = numbers.slice(0, 11);
 
-                toggleBtn.addEventListener('click', () => {
-                    const isHidden = detailsBox.classList.contains('hidden');
-                    if (isHidden) {
-                        detailsBox.classList.remove('hidden');
-                        toggleBtn.setAttribute('aria-expanded', 'true');
-                        toggleBtn.textContent = '접기';
+                    if (numbers.length < 4) {
+                        e.target.value = numbers;
+                    } else if (numbers.length < 8) {
+                        e.target.value = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
                     } else {
-                        detailsBox.classList.add('hidden');
-                        toggleBtn.setAttribute('aria-expanded', 'false');
-                        toggleBtn.textContent = '내용보기';
+                        e.target.value = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
                     }
                 });
             }
 
-            function showFeedback(type, title, message) {
-                const banner = document.getElementById('feedbackBanner');
-                const icon = document.getElementById('feedbackIcon');
-                const titleEl = document.getElementById('feedbackTitle');
-                const msgEl = document.getElementById('feedbackMessage');
-                if (!banner) return;
+            // 4. 개인정보 수집 동의 아코디언 토글
+            function setupPrivacyAccordion() {
+                const btn = document.getElementById('togglePrivacyBtn');
+                const details = document.getElementById('privacyDetails');
+                if (!btn || !details) return;
 
-                banner.className = 'mb-4 p-4 rounded-2xl border text-sm font-medium transition-all duration-300 shadow-md';
-                if (type === 'error') {
-                    banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
-                    icon.innerHTML = '<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-                } else {
-                    banner.classList.add('bg-[#F3E8FA]', 'border-[#C4A3DB]', 'text-[#3D1159]');
-                    icon.innerHTML = '<svg class="w-5 h-5 text-[#531B75]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                btn.addEventListener('click', () => {
+                    const isHidden = details.classList.toggle('hidden');
+                    btn.textContent = isHidden ? '내용보기' : '접기';
+                });
+            }
+
+            // 5. 왼쪽(교회 제출용) 태신자 성명 & 기도제목 입력 시 오른쪽(전도자 기도 보관용) 실시간 동기화
+            function setupCardMirroring() {
+                const visitorNameInput = document.getElementById('visitorName');
+                const prayerTopicInput = document.getElementById('prayerTopic');
+                const mirrorName = document.getElementById('mirrorVisitorName');
+                const mirrorPrayer = document.getElementById('mirrorPrayerTopic');
+
+                if (visitorNameInput && mirrorName) {
+                    visitorNameInput.addEventListener('input', () => {
+                        const val = visitorNameInput.value.trim();
+                        if (val) {
+                            mirrorName.textContent = val;
+                        } else {
+                            mirrorName.innerHTML = '<span class="text-slate-400 font-normal text-xs">작성 시 자동 입력됩니다</span>';
+                        }
+                    });
                 }
 
-                titleEl.textContent = title;
-                msgEl.textContent = message;
+                if (prayerTopicInput && mirrorPrayer) {
+                    prayerTopicInput.addEventListener('input', () => {
+                        const val = prayerTopicInput.value.trim();
+                        if (val) {
+                            mirrorPrayer.textContent = prayerTopicInput.value;
+                        } else {
+                            mirrorPrayer.innerHTML = '<span class="text-slate-400 text-xs">왼쪽 기도제목을 입력하시면 기도 보관용 카드에도 함께 표시됩니다.</span>';
+                        }
+                    });
+                }
+            }
+
+            // 6. '전도자 기도 보관용' 카드 PNG 이미지 저장 기능
+            function setupKeeperImageDownload() {
+                const saveBtn = document.getElementById('saveKeeperImageBtn');
+                const targetEl = document.getElementById('keeperCardCapture');
+                if (!saveBtn || !targetEl) return;
+
+                saveBtn.addEventListener('click', async () => {
+                    const visitorName = document.getElementById('visitorName')?.value.trim() || '태신자';
+                    if (typeof html2canvas === 'undefined') {
+                        showBanner('error', '이미지 변환 도구를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+                        return;
+                    }
+
+                    const originalHtml = saveBtn.innerHTML;
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = '이미지 생성 중...';
+
+                    try {
+                        const canvas = await html2canvas(targetEl, {
+                            scale: 2,
+                            backgroundColor: '#FFFFFF',
+                            useCORS: true
+                        });
+                        const dataUrl = canvas.toDataURL('image/png');
+                        const link = document.createElement('a');
+                        link.href = dataUrl;
+                        link.download = `전도자_기도보관용_${visitorName}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        showBanner('success', `'전도자 기도 보관용(${visitorName})' 카드가 이미지로 저장되었습니다.`);
+                    } catch (err) {
+                        console.error('이미지 저장 오류:', err);
+                        showBanner('error', '이미지 저장 중 문제가 발생했습니다. 화면 캡처를 이용해 주세요.');
+                    } finally {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalHtml;
+                    }
+                });
+            }
+
+            // 7. 알림 배너 표시
+            function showBanner(type, message) {
+                const banner = document.getElementById('statusBanner');
+                const icon = document.getElementById('statusIcon');
+                const text = document.getElementById('statusText');
+                if (!banner || !icon || !text) return;
+
+                banner.className = 'relative z-20 mx-5 sm:mx-8 mb-3 p-3.5 rounded-2xl border text-xs sm:text-sm font-semibold flex items-center justify-between shadow-sm';
+                if (type === 'success') {
+                    banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                    icon.innerHTML = '<svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                } else {
+                    banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                    icon.innerHTML = '<svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                }
+
+                text.textContent = message;
                 banner.classList.remove('hidden');
                 banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
-            function hideFeedback() {
-                const banner = document.getElementById('feedbackBanner');
-                if (banner) banner.classList.add('hidden');
+            function setupBannerClose() {
+                const closeBtn = document.getElementById('closeBannerBtn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
+                        document.getElementById('statusBanner')?.classList.add('hidden');
+                    });
+                }
             }
 
-            function setupFormSubmission() {
+            // 8. 폼 유효성 검사 및 제출
+            function setupFormSubmit() {
                 const form = document.getElementById('registrationForm');
-                if (!form) return;
+                const submitBtn = document.getElementById('submitBtn');
+                if (!form || !submitBtn) return;
 
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    hideFeedback();
 
                     const evangelistName = document.getElementById('evangelistName').value.trim();
                     const evangelistBirthDate = document.getElementById('evangelistBirthDate').value;
                     const cat1 = document.getElementById('evangelistCategory1').value;
                     const cat2 = document.getElementById('evangelistCategory2').value;
                     const cat3 = document.getElementById('evangelistCategory3').value;
-                    const evangelistGroup = (cat1 && cat2 && cat3) ? `${cat1} > ${cat2} > ${cat3}` : '';
                     const pledgeDate = document.getElementById('pledgeDate').value;
                     const visitorName = document.getElementById('visitorName').value.trim();
                     const genderEl = document.querySelector('input[name="gender"]:checked');
-                    const gender = genderEl ? genderEl.value : '';
                     const birthDate = document.getElementById('birthDate').value;
                     const phone = document.getElementById('phone').value.trim();
-                    const prayerTopic = document.getElementById('prayerTopic')?.value.trim() || '';
+                    const prayerTopic = document.getElementById('prayerTopic').value.trim();
                     const privacyConsent = document.getElementById('privacyConsent').checked;
 
                     if (!evangelistName) {
-                        showFeedback('error', '입력 확인 필요', '전도자 성명을 입력해 주세요.');
+                        showBanner('error', '전도자 성명을 입력해 주세요.');
                         document.getElementById('evangelistName').focus();
                         return;
                     }
                     if (!evangelistBirthDate) {
-                        showFeedback('error', '입력 확인 필요', '전도자 생년월일을 선택해 주세요.');
+                        showBanner('error', '전도자 생년월일을 선택해 주세요.');
                         document.getElementById('evangelistBirthDate').focus();
                         return;
                     }
                     if (!cat1 || !cat2 || !cat3) {
-                        showFeedback('error', '선택 확인 필요', '전도자 소속의 대분류, 중분류, 소분류를 모두 선택해 주세요.');
+                        showBanner('error', '전도자 소속(대분류·중분류·소분류)을 모두 선택해 주세요.');
                         if (!cat1) document.getElementById('evangelistCategory1').focus();
                         else if (!cat2) document.getElementById('evangelistCategory2').focus();
                         else document.getElementById('evangelistCategory3').focus();
                         return;
                     }
                     if (!visitorName) {
-                        showFeedback('error', '입력 확인 필요', '태신자 성명을 입력해 주세요.');
+                        showBanner('error', '태신자 성명을 입력해 주세요.');
                         document.getElementById('visitorName').focus();
                         return;
                     }
-                    if (!gender) {
-                        showFeedback('error', '입력 확인 필요', '태신자 성별(남/여)을 선택해 주세요.');
+                    if (!genderEl) {
+                        showBanner('error', '태신자 성별(남/여)을 선택해 주세요.');
                         return;
                     }
                     if (!birthDate) {
-                        showFeedback('error', '입력 확인 필요', '태신자 생년월일을 선택해 주세요.');
+                        showBanner('error', '태신자 생년월일을 선택해 주세요.');
                         document.getElementById('birthDate').focus();
                         return;
                     }
-                    const phoneDigits = phone.replace(/\D/g, '');
-                    if (phoneDigits.length < 10) {
-                        showFeedback('error', '연락처 형식 오류', '올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+                    if (phone.replace(/[^0-9]/g, '').length < 10) {
+                        showBanner('error', '올바른 태신자 연락처를 입력해 주세요.');
                         document.getElementById('phone').focus();
                         return;
                     }
                     if (!pledgeDate) {
-                        showFeedback('error', '입력 확인 필요', '작정일을 선택해 주세요.');
+                        showBanner('error', '작정일을 선택해 주세요.');
                         document.getElementById('pledgeDate').focus();
                         return;
                     }
                     if (!privacyConsent) {
-                        showFeedback('error', '동의 확인 필요', '[필수] 개인정보 수집 및 이용에 동의해 주세요.');
+                        showBanner('error', '개인정보 수집 및 이용에 동의해 주세요.');
                         document.getElementById('privacyConsent').focus();
                         return;
                     }
 
-                    const submitBtn = document.getElementById('submitBtn');
-                    const submitBtnText = document.getElementById('submitBtnText');
-                    const submitSpinner = document.getElementById('submitSpinner');
-                    submitBtn.disabled = true;
-                    submitBtnText.textContent = '제출 처리 중...';
-                    submitSpinner.classList.remove('hidden');
-
+                    const evangelistGroup = `${cat1} > ${cat2} > ${cat3}`;
                     const record = {
                         id: Date.now(),
                         submittedAt: new Date().toLocaleString('ko-KR'),
@@ -897,14 +812,26 @@
                         evangelistGroup,
                         pledgeDate,
                         visitorName,
-                        gender,
+                        gender: genderEl.value,
                         birthDate,
                         phone,
                         prayerTopic,
                         privacyAgreed: '동의함'
                     };
 
+                    const originalBtnHtml = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>제출 처리 중...</span>';
+
                     try {
+                        try {
+                            const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                            existing.unshift(record);
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+                        } catch (storageErr) {
+                            console.warn('로컬 스토리지 접근 제한 환경:', storageErr);
+                        }
+
                         if (GOOGLE_APPS_SCRIPT_URL) {
                             await fetch(GOOGLE_APPS_SCRIPT_URL, {
                                 method: 'POST',
@@ -914,174 +841,139 @@
                             });
                         }
 
-                        saveRecordLocally(record);
-                        openSuccessModal(record);
-
-                        form.reset();
-                        const cat2El = document.getElementById('evangelistCategory2');
-                        const cat3El = document.getElementById('evangelistCategory3');
-                        if (cat2El) {
-                            cat2El.innerHTML = '<option value="" disabled selected>중분류</option>';
-                            cat2El.disabled = true;
-                        }
-                        if (cat3El) {
-                            cat3El.innerHTML = '<option value="" disabled selected>소분류</option>';
-                            cat3El.disabled = true;
-                        }
-                        setTodayDate();
-                        setupPrayerKeepSync();
-                    } catch (error) {
-                        console.error('등록 전송 오류:', error);
-                        showFeedback('error', '전송 오류', '제출 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                        showBanner('success', `${visitorName} 님의 태신자 카드가 정상적으로 제출되었습니다. (전도자: ${evangelistName})`);
+                        
+                        // 다음 태신자 등록을 위해 태신자 정보만 초기화하고 전도자 정보는 유지
+                        document.getElementById('visitorName').value = '';
+                        document.querySelectorAll('input[name="gender"]').forEach(r => r.checked = false);
+                        document.getElementById('birthDate').value = '';
+                        document.getElementById('phone').value = '';
+                        document.getElementById('prayerTopic').value = '';
+                        document.getElementById('mirrorVisitorName').innerHTML = '<span class="text-slate-400 font-normal text-xs">작성 시 자동 입력됩니다</span>';
+                        document.getElementById('mirrorPrayerTopic').innerHTML = '<span class="text-slate-400 text-xs">왼쪽 기도제목을 입력하시면 기도 보관용 카드에도 함께 표시됩니다.</span>';
+                    } catch (err) {
+                        console.error('제출 오류:', err);
+                        showBanner('error', '제출 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
                     } finally {
                         submitBtn.disabled = false;
-                        submitBtnText.textContent = '태신자 카드 제출하기';
-                        submitSpinner.classList.add('hidden');
+                        submitBtn.innerHTML = originalBtnHtml;
                     }
                 });
             }
 
-            function loadStoredRecords() {
-                try {
-                    const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
-                    registeredRecords = raw ? JSON.parse(raw) : [];
-                } catch (e) {
-                    registeredRecords = [];
-                }
-            }
-
-            function saveRecordLocally(record) {
-                registeredRecords.unshift(record);
-                try {
-                    if (window.localStorage) {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(registeredRecords));
-                    }
-                } catch (e) {
-                    console.warn('로컬 스토리지 저장 제한 환경:', e);
-                }
-            }
-
-            function escapeHTML(str) {
-                return String(str || '')
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#39;');
-            }
-
-            function openSuccessModal(record) {
-                const modal = document.getElementById('successModal');
-                const summary = document.getElementById('modalSummaryText');
-                if (!modal || !summary) return;
-                summary.innerHTML = `
-                    <strong class="text-[#3D1159]">${escapeHTML(record.visitorName)}</strong>님의 온라인 태신자 카드가 정상 접수되었습니다.<br>
-                    <span class="text-xs text-slate-400 mt-1 inline-block">(전도자: ${escapeHTML(record.evangelistName)} / ${escapeHTML(record.evangelistGroup)})</span>
-                `;
-                modal.classList.remove('hidden');
-            }
-
-            function closeSuccessModal() {
-                const modal = document.getElementById('successModal');
-                if (modal) modal.classList.add('hidden');
-            }
-
-            function openMyLookupModal() {
-                const modal = document.getElementById('myLookupModal');
-                const form = document.getElementById('myLookupForm');
-                const resultBox = document.getElementById('myLookupResult');
-                if (!modal) return;
-                if (form) {
-                    form.reset();
-                    const lCat2 = document.getElementById('lookupCategory2');
-                    const lCat3 = document.getElementById('lookupCategory3');
-                    if (lCat2) {
-                        lCat2.innerHTML = '<option value="" disabled selected>중분류</option>';
-                        lCat2.disabled = true;
-                    }
-                    if (lCat3) {
-                        lCat3.innerHTML = '<option value="" disabled selected>소분류</option>';
-                        lCat3.disabled = true;
-                    }
-                }
-                if (resultBox) {
-                    resultBox.innerHTML = `
-                        <div class="text-center py-6 text-xs text-slate-400 bg-[#FAF5FF] rounded-2xl border border-purple-100">
-                            전도자 성명, 생년월일, 소속(대·중·소분류)을 입력하시면 등록하신 태신자 명단이 모두 조회됩니다.
-                        </div>
-                    `;
-                }
-                modal.classList.remove('hidden');
-            }
-
-            function closeMyLookupModal() {
-                const modal = document.getElementById('myLookupModal');
-                if (modal) modal.classList.add('hidden');
-            }
-
+            // 9. 전도자별 등록 내역 통합 조회
             function setupMyLookup() {
+                const openBtn = document.getElementById('openMyLookupBtn');
+                const closeBtn = document.getElementById('closeMyLookupBtn');
+                const modal = document.getElementById('myLookupModal');
                 const lookupForm = document.getElementById('myLookupForm');
                 const resultBox = document.getElementById('myLookupResult');
-                if (!lookupForm || !resultBox) return;
+                const lookupSubmitBtn = document.getElementById('myLookupSubmitBtn');
+
+                if (!openBtn || !closeBtn || !modal || !lookupForm || !resultBox) return;
+
+                openBtn.addEventListener('click', () => {
+                    const currentEvName = document.getElementById('evangelistName')?.value.trim();
+                    const currentEvBirth = document.getElementById('evangelistBirthDate')?.value;
+                    const c1 = document.getElementById('evangelistCategory1')?.value;
+                    const c2 = document.getElementById('evangelistCategory2')?.value;
+                    const c3 = document.getElementById('evangelistCategory3')?.value;
+
+                    if (currentEvName) document.getElementById('lookupEvangelistName').value = currentEvName;
+                    if (currentEvBirth) document.getElementById('lookupEvangelistBirthDate').value = currentEvBirth;
+                    if (c1) {
+                        const l1 = document.getElementById('lookupEvangelistCategory1');
+                        l1.value = c1;
+                        l1.dispatchEvent(new Event('change'));
+                        if (c2) {
+                            const l2 = document.getElementById('lookupEvangelistCategory2');
+                            l2.value = c2;
+                            l2.dispatchEvent(new Event('change'));
+                            if (c3) {
+                                document.getElementById('lookupEvangelistCategory3').value = c3;
+                            }
+                        }
+                    }
+
+                    resultBox.classList.add('hidden');
+                    resultBox.innerHTML = '';
+                    modal.classList.remove('hidden');
+                });
+
+                closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.classList.add('hidden');
+                });
 
                 lookupForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
+
                     const inputName = document.getElementById('lookupEvangelistName').value.trim();
                     const inputBirthDate = document.getElementById('lookupEvangelistBirthDate').value;
-                    const lCat1 = document.getElementById('lookupCategory1').value;
-                    const lCat2 = document.getElementById('lookupCategory2').value;
-                    const lCat3 = document.getElementById('lookupCategory3').value;
-                    const inputGroup = (lCat1 && lCat2 && lCat3) ? `${lCat1} > ${lCat2} > ${lCat3}` : '';
+                    const l1 = document.getElementById('lookupEvangelistCategory1').value;
+                    const l2 = document.getElementById('lookupEvangelistCategory2').value;
+                    const l3 = document.getElementById('lookupEvangelistCategory3').value;
 
-                    if (!inputName || !inputBirthDate || !inputGroup) {
-                        resultBox.innerHTML = `
-                            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 text-center font-medium">
-                                전도자 성명, 생년월일, 소속(대분류·중분류·소분류)을 모두 입력해 주세요.
-                            </div>
-                        `;
-                        return;
-                    }
+                    if (!inputName || !inputBirthDate || !l1 || !l2 || !l3) return;
+                    const inputGroup = `${l1} > ${l2} > ${l3}`;
 
-                    loadStoredRecords();
-                    let sourceRecords = [...registeredRecords];
+                    const origText = lookupSubmitBtn.textContent;
+                    lookupSubmitBtn.disabled = true;
+                    lookupSubmitBtn.textContent = '조회 중...';
 
-                    if (GOOGLE_APPS_SCRIPT_URL) {
-                        try {
+                    let sourceRecords = [];
+                    try {
+                        if (GOOGLE_APPS_SCRIPT_URL) {
                             const res = await fetch(GOOGLE_APPS_SCRIPT_URL);
                             const remoteData = await res.json();
                             if (Array.isArray(remoteData)) {
                                 sourceRecords = remoteData;
                             }
-                        } catch (err) {
-                            console.warn('원격 조회 실패, 로컬 데이터로 조회합니다:', err);
+                        } else {
+                            sourceRecords = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                         }
+                    } catch (err) {
+                        console.warn('조회 중 오류:', err);
+                        try {
+                            sourceRecords = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                        } catch (e2) {
+                            sourceRecords = [];
+                        }
+                    } finally {
+                        lookupSubmitBtn.disabled = false;
+                        lookupSubmitBtn.textContent = origText;
                     }
 
                     const matches = sourceRecords.filter(item => {
                         const savedName = String(item.evangelistName || '').trim();
-                        const savedBirth = String(item.evangelistBirthDate || '').trim();
+                        const rawBirth = String(item.evangelistBirthDate || '').trim();
+                        const savedBirth = rawBirth.includes('T')
+                            ? new Date(new Date(rawBirth).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
+                            : rawBirth;
                         const savedGroup = String(item.evangelistGroup || '').trim();
                         return savedName === inputName && savedBirth === inputBirthDate && savedGroup === inputGroup;
                     });
 
+                    resultBox.classList.remove('hidden');
+
                     if (matches.length === 0) {
                         resultBox.innerHTML = `
-                            <div class="p-5 rounded-2xl bg-[#FAF5FF] border border-purple-100 text-center space-y-1">
-                                <p class="text-sm font-bold text-[#3D1159]">일치하는 등록 내역이 없습니다.</p>
-                                <p class="text-xs text-slate-500">입력하신 전도자 성명, 생년월일, 소속 분류를 다시 한번 확인해 주세요.</p>
+                            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs sm:text-sm text-slate-600">
+                                입력하신 전도자 정보(<strong class="text-slate-900">${escapeHTML(inputName)} / ${escapeHTML(inputBirthDate)}</strong>)로 등록된 내역이 없습니다.<br>
+                                <span class="text-xs text-slate-400 mt-1 block">성명, 생년월일 및 소속(대·중·소분류)을 다시 확인해 주세요.</span>
                             </div>
                         `;
                         return;
                     }
 
-                    const summaryHeader = `
-                        <div class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-[#531B75] text-white text-xs">
-                            <span class="truncate"><strong>${escapeHTML(inputName)}</strong> (${escapeHTML(inputBirthDate)} · ${escapeHTML(lCat2)} ${escapeHTML(lCat3)})</span>
-                            <span class="px-2 py-0.5 rounded-full bg-[#D4A853] text-slate-950 font-extrabold shrink-0">총 ${matches.length}명</span>
-                        </div>
-                    `;
-
-                    const cardsHtml = matches.map((item, index) => `
+                    const cardsHtml = matches.map((item, index) => {
+                        const cleanVisitorBirth = String(item.birthDate || '').includes('T')
+                            ? new Date(new Date(item.birthDate).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
+                            : (item.birthDate || '-');
+                        const cleanPledgeDate = String(item.pledgeDate || '').includes('T')
+                            ? new Date(new Date(item.pledgeDate).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
+                            : (item.pledgeDate || '-');
+                        return `
                         <div class="p-4 rounded-2xl bg-[#FAF5FF] border border-[#C4A3DB] space-y-2 text-xs">
                             <div class="flex items-center justify-between border-b border-purple-200/70 pb-2">
                                 <div class="flex items-center gap-2">
@@ -1092,18 +984,38 @@
                             </div>
                             <div class="grid grid-cols-2 gap-y-1.5 text-slate-700 pt-0.5">
                                 <span class="text-slate-500">태신자 생년월일</span>
-                                <span class="font-medium text-right">${escapeHTML(item.birthDate)}</span>
+                                <span class="font-medium text-right">${escapeHTML(cleanVisitorBirth)}</span>
                                 <span class="text-slate-500">태신자 연락처</span>
                                 <span class="font-medium text-right">${escapeHTML(item.phone)}</span>
                                 <span class="text-slate-500">작정일</span>
-                                <span class="font-medium text-right">${escapeHTML(item.pledgeDate)}</span>
+                                <span class="font-medium text-right">${escapeHTML(cleanPledgeDate)}</span>
                                 ${item.prayerTopic ? `<span class="text-slate-500 col-span-2 pt-1">기도제목: <strong class="font-medium text-slate-800">${escapeHTML(item.prayerTopic)}</strong></span>` : ''}
                             </div>
                         </div>
-                    `).join('');
+                    `;
+                    }).join('');
 
-                    resultBox.innerHTML = summaryHeader + cardsHtml;
+                    resultBox.innerHTML = `
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-[#3D1159]">${escapeHTML(inputName)} 전도자님 등록 명단</span>
+                                <span class="px-2.5 py-1 rounded-full bg-purple-100 text-[#531B75] font-bold text-xs">총 ${matches.length}명</span>
+                            </div>
+                            <div class="space-y-2.5">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
                 });
+            }
+
+            function escapeHTML(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
             }
         })();
     </script>
