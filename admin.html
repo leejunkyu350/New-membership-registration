@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 전용 - 태신자 취합 명단</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard & Inter 폰트 로드 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Pretendard"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
+
+    <!-- 1. 관리자 비밀번호 인증 화면 -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-3xl shadow-xl shadow-slate-200/70 border border-slate-200 p-7 sm:p-8 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center mx-auto mb-5 shadow-md">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+            <h1 class="text-xl font-bold text-slate-900">관리자 전용 페이지</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1.5">취합된 태신자 명단을 열람하려면 비밀번호를 입력하세요.</p>
+
+            <form id="loginForm" class="mt-6 space-y-4">
+                <div>
+                    <input type="password" id="adminPasswordInput" required placeholder="관리자 비밀번호 입력"
+                        class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-center text-slate-900 tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 transition">
+                    <p id="loginErrorMsg" class="hidden text-xs text-rose-600 font-medium mt-2">비밀번호가 일치하지 않습니다.</p>
+                </div>
+                <button type="submit"
+                    class="w-full py-3.5 px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition cursor-pointer shadow-sm">
+                    명단 열람하기
+                </button>
+            </form>
+            <p class="text-[11px] text-slate-400 mt-4">초기 테스트 비밀번호: 1234</p>
+        </div>
+    </div>
+
+    <!-- 2. 관리자 메인 대시보드 -->
+    <div id="dashboardScreen" class="hidden max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:py-12">
+        
+        <!-- 알림 배너 -->
+        <div id="adminBanner" class="hidden mb-6 p-4 rounded-2xl border text-sm font-medium bg-amber-50 border-amber-200 text-amber-800 flex items-center justify-between">
+            <span id="adminBannerText"></span>
+            <button type="button" id="closeAdminBannerBtn" class="text-amber-700 hover:text-amber-950 p-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- 상단 헤더 & 엑셀 다운로드 버튼 -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 p-6 sm:p-8 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold mb-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span>ADMIN DASHBOARD</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">태신자 및 작정 등록 취합 현황</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">접수된 태신자 및 전도자 내역을 조회하고 엑셀(CSV) 파일로 내려받을 수 있습니다.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                    <button type="button" id="refreshBtn"
+                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold transition cursor-pointer">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        새로고침
+                    </button>
+                    <button type="button" id="downloadCsvBtn"
+                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        엑셀(CSV) 다운로드
+                    </button>
+                    <button type="button" id="logoutBtn"
+                        class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs sm:text-sm font-medium transition cursor-pointer">
+                        잠금
+                    </button>
+                </div>
+            </div>
+
+            <!-- 요약 통계 & 검색 필터 바 -->
+            <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="px-4 py-2 rounded-2xl bg-slate-50 border border-slate-200/70">
+                        <span class="text-xs text-slate-500">전체 누적 등록</span>
+                        <p class="text-lg font-bold text-slate-900"><span id="totalCount">0</span><span class="text-xs font-normal text-slate-500 ml-0.5">명</span></p>
+                    </div>
+                    <div class="px-4 py-2 rounded-2xl bg-amber-50/70 border border-amber-200/70">
+                        <span class="text-xs text-amber-800">오늘 접수</span>
+                        <p class="text-lg font-bold text-amber-700"><span id="todayCount">0</span><span class="text-xs font-normal text-amber-700 ml-0.5">명</span></p>
+                    </div>
+                </div>
+
+                <!-- 대분류 필터 & 실시간 검색 입력창 -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+                    <select id="categoryFilter"
+                        class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 transition cursor-pointer">
+                        <option value="">전체 소속 (대분류)</option>
+                        <option value="대교구">대교구</option>
+                        <option value="지성전">지성전</option>
+                        <option value="준교구">준교구</option>
+                    </select>
+
+                    <div class="relative w-full sm:w-72">
+                        <input type="text" id="searchInput" placeholder="태신자, 전도자, 생년월일, 교구 검색..."
+                            class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 transition">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 명단 테이블 카드 -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <div id="emptyState" class="text-center py-16 px-4 text-sm text-slate-400">
+                표시할 등록 명단이 없습니다.<br>태신자 등록 페이지에서 데이터를 제출하면 이곳에서 확인할 수 있습니다.
+            </div>
+
+            <div id="tableWrapper" class="hidden overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-slate-600 font-semibold bg-purple-50/70">
+                            <th class="py-3.5 px-5 whitespace-nowrap">No.</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">작정일</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">전도자 (생년월일)</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">전도자 소속 (대·중·소분류)</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">태신자 성함</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">성별</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">태신자 생년월일</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">연락처</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">기도제목</th>
+                            <th class="py-3.5 px-5 whitespace-nowrap">접수일시</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody" class="divide-y divide-slate-100 text-slate-700">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            const ADMIN_PASSWORD = '1234';
+            const STORAGE_KEY = 'visitor_registration_records_v1';
+            const GOOGLE_APPS_SCRIPT_URL = ''; 
+
+            let allRecords = [];
+
+            function initAdmin() {
+                setupLogin();
+                setupControls();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initAdmin);
+            } else {
+                initAdmin();
+            }
+
+            function setupLogin() {
+                const loginForm = document.getElementById('loginForm');
+                const passwordInput = document.getElementById('adminPasswordInput');
+                const errorMsg = document.getElementById('loginErrorMsg');
+
+                if (!loginForm) return;
+
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (passwordInput.value === ADMIN_PASSWORD) {
+                        errorMsg.classList.add('hidden');
+                        passwordInput.value = '';
+                        document.getElementById('loginScreen').classList.add('hidden');
+                        document.getElementById('dashboardScreen').classList.remove('hidden');
+                        loadRecords();
+                    } else {
+                        errorMsg.classList.remove('hidden');
+                        passwordInput.focus();
+                    }
+                });
+            }
+
+            function setupControls() {
+                const refreshBtn = document.getElementById('refreshBtn');
+                const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const searchInput = document.getElementById('searchInput');
+                const categoryFilter = document.getElementById('categoryFilter');
+                const closeAdminBannerBtn = document.getElementById('closeAdminBannerBtn');
+
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => {
+                        loadRecords();
+                        showBanner('최신 명단으로 새로고침되었습니다.');
+                    });
+                }
+
+                if (downloadCsvBtn) {
+                    downloadCsvBtn.addEventListener('click', downloadCSV);
+                }
+
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        document.getElementById('dashboardScreen').classList.add('hidden');
+                        document.getElementById('loginScreen').classList.remove('hidden');
+                    });
+                }
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', () => applyFilters());
+                }
+
+                if (categoryFilter) {
+                    categoryFilter.addEventListener('change', () => applyFilters());
+                }
+
+                if (closeAdminBannerBtn) {
+                    closeAdminBannerBtn.addEventListener('click', () => {
+                        document.getElementById('adminBanner').classList.add('hidden');
+                    });
+                }
+            }
+
+            function applyFilters() {
+                const keyword = document.getElementById('searchInput')?.value.trim() || '';
+                const category = document.getElementById('categoryFilter')?.value || '';
+                renderTable(keyword, category);
+            }
+
+            async function loadRecords() {
+                if (GOOGLE_APPS_SCRIPT_URL) {
+                    try {
+                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+                        const data = await response.json();
+                        if (Array.isArray(data)) {
+                            allRecords = data;
+                        }
+                    } catch (err) {
+                        console.error('원격 데이터 조회 오류:', err);
+                        showBanner('서버 데이터를 불러오는 중 오류가 발생했습니다.');
+                    }
+                } else {
+                    try {
+                        const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
+                        allRecords = raw ? JSON.parse(raw) : [];
+                    } catch (e) {
+                        allRecords = [];
+                    }
+                }
+
+                updateStats();
+                applyFilters();
+            }
+
+            function updateStats() {
+                const totalEl = document.getElementById('totalCount');
+                const todayEl = document.getElementById('todayCount');
+                
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const todayMatches = allRecords.filter(r => r.pledgeDate === todayStr).length;
+
+                if (totalEl) totalEl.textContent = allRecords.length;
+                if (todayEl) todayEl.textContent = todayMatches;
+            }
+
+            function renderTable(keyword = '', category = '') {
+                const emptyState = document.getElementById('emptyState');
+                const tableWrapper = document.getElementById('tableWrapper');
+                const tbody = document.getElementById('recordsTableBody');
+
+                const filtered = allRecords.filter(item => {
+                    const matchesCategory = !category || item.evangelistCategory1 === category || String(item.evangelistGroup || '').startsWith(category);
+                    const matchesKeyword = !keyword || [
+                        item.visitorName,
+                        item.evangelistName,
+                        item.evangelistBirthDate,
+                        item.evangelistGroup,
+                        item.phone,
+                        item.pledgeDate,
+                        item.birthDate
+                    ].some(field => String(field || '').toLowerCase().includes(keyword.toLowerCase()));
+                    return matchesCategory && matchesKeyword;
+                });
+
+                if (filtered.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    tableWrapper.classList.add('hidden');
+                    tbody.innerHTML = '';
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                tableWrapper.classList.remove('hidden');
+
+                tbody.innerHTML = filtered.map((item, idx) => {
+                    const evBirth = item.evangelistBirthDate ? `<span class="text-xs text-slate-400 ml-1">(${escapeHTML(item.evangelistBirthDate)})</span>` : '';
+                    return `
+                        <tr class="hover:bg-amber-50/40 transition">
+                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-400 font-mono text-xs">${filtered.length - idx}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-600">${escapeHTML(item.pledgeDate)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">
+                                <span class="font-semibold text-slate-800">${escapeHTML(item.evangelistName)}</span>${evBirth}
+                            </td>
+                            <td class="py-3.5 px-5 whitespace-nowrap text-xs text-slate-600">
+                            <td class="py-3.5 px-5 whitespace-nowrap font-bold text-[#531B75]">${escapeHTML(item.visitorName)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap">${escapeHTML(item.gender)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap text-slate-600">${escapeHTML(item.birthDate)}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap font-mono text-xs text-slate-700">${escapeHTML(item.phone)}</td>
+                            <td class="py-3.5 px-5 max-w-xs truncate text-xs text-slate-600" title="${escapeHTML(item.prayerTopic || '')}">${escapeHTML(item.prayerTopic || '-')}</td>
+                            <td class="py-3.5 px-5 whitespace-nowrap text-xs text-slate-400">${escapeHTML(item.submittedAt)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function downloadCSV() {
+                if (allRecords.length === 0) {
+                    showBanner('다운로드할 등록 데이터가 없습니다.');
+                    return;
+                }
+
+                const headers = ['접수일시', '작정일', '전도자이름', '전도자생년월일', '대분류', '중분류', '소분류', '전체소속', '태신자이름', '성별', '태신자생년월일', '연락처', '기도제목', '개인정보동의'];
+                const rows = allRecords.map(r => [
+                    r.submittedAt,
+                    r.pledgeDate,
+                    r.evangelistName,
+                    r.evangelistBirthDate || '',
+                    r.evangelistCategory1 || '',
+                    r.evangelistCategory2 || '',
+                    r.evangelistCategory3 || '',
+                    r.evangelistGroup,
+                    r.visitorName,
+                    r.gender,
+                    r.birthDate,
+                    r.phone,
+                    r.prayerTopic || '',
+                    r.privacyAgreed
+                ].map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(','));
+
+                const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                const todayStr = new Date().toISOString().slice(0, 10);
+                link.href = url;
+                link.setAttribute('download', `태신자등록명단_${todayStr}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+
+            function showBanner(msg) {
+                const banner = document.getElementById('adminBanner');
+                const text = document.getElementById('adminBannerText');
+                if (!banner || !text) return;
+                text.textContent = msg;
+                banner.classList.remove('hidden');
+            }
+
+            function escapeHTML(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+        })();
+    </script>
+</body>
+</html>
