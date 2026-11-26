@@ -1009,38 +1009,26 @@
                     lookupSubmitBtn.disabled = true;
                     lookupSubmitBtn.textContent = '조회 중...';
 
-                    let sourceRecords = [];
+                    // 서버에서 본인이 등록한 내역만 받아옴
+                    let matches = [];
                     try {
-                        if (GOOGLE_APPS_SCRIPT_URL) {
-                            const res = await fetch(GOOGLE_APPS_SCRIPT_URL);
-                            const remoteData = await res.json();
-                            if (Array.isArray(remoteData)) {
-                                sourceRecords = remoteData;
-                            }
-                        } else {
-                            sourceRecords = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                        }
+                        const res = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({ action: 'lookup', name: inputName, birthDate: inputBirthDate, group: inputGroup })
+                        });
+                        const data = await res.json();
+                        if (data.status !== 'success') throw new Error(data.message);
+                        matches = data.records;
                     } catch (err) {
                         console.warn('조회 중 오류:', err);
-                        try {
-                            sourceRecords = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                        } catch (e2) {
-                            sourceRecords = [];
-                        }
+                        resultBox.classList.remove('hidden');
+                        resultBox.innerHTML = '<div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs sm:text-sm text-slate-600">조회하지 못했습니다. 잠시 후 다시 시도해 주세요.</div>';
+                        return;
                     } finally {
                         lookupSubmitBtn.disabled = false;
                         lookupSubmitBtn.textContent = origText;
                     }
-
-                    const matches = sourceRecords.filter(item => {
-                        const savedName = String(item.evangelistName || '').trim();
-                        const rawBirth = String(item.evangelistBirthDate || '').trim();
-                        const savedBirth = rawBirth.includes('T')
-                            ? new Date(new Date(rawBirth).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
-                            : rawBirth;
-                        const savedGroup = String(item.evangelistGroup || '').trim();
-                        return savedName === inputName && savedBirth === inputBirthDate && savedGroup === inputGroup;
-                    });
 
                     resultBox.classList.remove('hidden');
 
