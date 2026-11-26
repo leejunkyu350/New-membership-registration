@@ -178,6 +178,12 @@
                         <!-- 입력 필드 그리드 영역 -->
                         <div class="p-3.5 sm:p-4 space-y-2.5">
                             
+                            <!-- 인도자 섹션 타이틀 -->
+                            <div class="flex items-center gap-1.5 pt-0.5">
+                                <span class="w-1.5 h-4 rounded-full bg-[#531B75]"></span>
+                                <h2 class="text-sm font-extrabold text-[#3D1159] tracking-tight">인도자</h2>
+                            </div>
+
                             <!-- 1행: 인도자 성명 + 인도자 생년월일 -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- 인도자 성명 -->
@@ -223,13 +229,10 @@
                                 </div>
                             </div>
 
-                            <!-- 인도자 / 태신자 작성 영역 구분선 -->
-                            <div class="relative py-1.5 flex items-center" aria-hidden="true">
-                                <div class="flex-grow border-t-2 border-dashed border-[#C4A3DB]"></div>
-                                <span class="shrink-0 mx-3 px-2.5 py-0.5 rounded-full bg-[#F5EEFA] border border-[#D5BBE8] text-[11px] font-extrabold text-[#531B75] tracking-wide">
-                                    태신자 정보 입력
-                                </span>
-                                <div class="flex-grow border-t-2 border-dashed border-[#C4A3DB]"></div>
+                            <!-- 태신자 섹션 타이틀 -->
+                            <div class="flex items-center gap-1.5 pt-2">
+                                <span class="w-1.5 h-4 rounded-full bg-[#531B75]"></span>
+                                <h2 class="text-sm font-extrabold text-[#3D1159] tracking-tight">태신자</h2>
                             </div>
 
                             <!-- 3행: 태신자 성명 + 성별(남/여 체크박스 스타일) -->
@@ -506,7 +509,7 @@
         (function() {
             const STORAGE_KEY = 'visitor_registration_records_v1';
             // 구글 스프레드시트(Apps Script) 웹 앱 URL을 아래 작은따옴표 안에 붙여넣으세요.
-            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec';
+            const GOOGLE_APPS_SCRIPT_URL = '';
 
             // 소속 3단계 계층 데이터 정의
             const GROUP_HIERARCHY = {
