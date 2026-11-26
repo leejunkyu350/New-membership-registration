@@ -765,6 +765,11 @@
                     saveBtn.disabled = true;
                     saveBtn.textContent = '이미지 생성 중...';
 
+                    // html2canvas가 글자를 아래로 밀어 그리는 현상 방지 (Tailwind의 img{display:block} 영향)
+                    const captureFix = document.createElement('style');
+                    captureFix.textContent = 'img { display: inline-block !important; }';
+                    document.head.appendChild(captureFix);
+
                     try {
                         const canvas = await html2canvas(targetEl, {
                             scale: 2,
@@ -783,6 +788,7 @@
                         console.error('이미지 저장 오류:', err);
                         showBanner('error', '이미지 저장 중 문제가 발생했습니다. 화면 캡처를 이용해 주세요.');
                     } finally {
+                        captureFix.remove();
                         saveBtn.disabled = false;
                         saveBtn.innerHTML = originalHtml;
                     }
@@ -1023,7 +1029,7 @@
                     } catch (err) {
                         console.warn('조회 중 오류:', err);
                         resultBox.classList.remove('hidden');
-                        resultBox.innerHTML = '<div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs sm:text-sm text-slate-600">조회하지 못했습니다. 잠시 후 다시 시도해 주세요.</div>';
+                        resultBox.innerHTML = '<div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs sm:text-sm text-slate-600">' + escapeHTML(err instanceof TypeError || !err.message ? '조회하지 못했습니다. 잠시 후 다시 시도해 주세요.' : err.message) + '</div>';
                         return;
                     } finally {
                         lookupSubmitBtn.disabled = false;
