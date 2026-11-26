@@ -4,25 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 전용 - 태신자 취합 명단</title>
-    <!-- Tailwind CSS 로드 -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Pretendard & Inter 폰트 로드 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Pretendard"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind CSS (미리 빌드, 클래스를 새로 추가하면 다시 빌드 필요) -->
+    <style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Pretendard,Inter,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.left-3{left:.75rem}.top-3{top:.75rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-0\.5{margin-left:.125rem}.ml-1{margin-left:.25rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-6{margin-top:1.5rem}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.hidden{display:none}.h-14{height:3.5rem}.h-2{height:.5rem}.h-4{height:1rem}.h-7{height:1.75rem}.h-8{height:2rem}.min-h-screen{min-height:100vh}.w-14{width:3.5rem}.w-2{width:.5rem}.w-4{width:1rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-full{width:100%}.max-w-6xl{max-width:72rem}.max-w-sm{max-width:24rem}.max-w-xs{max-width:20rem}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}@keyframes spin{to{transform:rotate(1turn)}}.animate-spin{animation:spin 1s linear infinite}.cursor-pointer{cursor:pointer}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-slate-100>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249/var(--tw-divide-opacity,1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}.border-amber-200\/70{border-color:hsla(48,97%,77%,.7)}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-slate-200\/70{border-color:rgba(226,232,240,.7)}.border-slate-200\/80{border-color:rgba(226,232,240,.8)}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-amber-50\/70{background-color:rgba(255,251,235,.7)}.bg-amber-600{--tw-bg-opacity:1;background-color:rgb(217 119 6/var(--tw-bg-opacity,1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.bg-purple-50\/70{background-color:rgba(250,245,255,.7)}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pl-9{padding-left:2.25rem}.pr-4{padding-right:1rem}.pt-6{padding-top:1.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.tracking-tight{letter-spacing:-.025em}.tracking-widest{letter-spacing:.1em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-purple-900{--tw-text-opacity:1;color:rgb(88 28 135/var(--tw-text-opacity,1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.placeholder-slate-400::-moz-placeholder{--tw-placeholder-opacity:1;color:rgb(148 163 184/var(--tw-placeholder-opacity,1))}.placeholder-slate-400::placeholder{--tw-placeholder-opacity:1;color:rgb(148 163 184/var(--tw-placeholder-opacity,1))}.opacity-25{opacity:.25}.opacity-75{opacity:.75}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-md,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-slate-200\/70{--tw-shadow-color:rgba(226,232,240,.7);--tw-shadow:var(--tw-shadow-colored)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:bg-amber-700:hover{--tw-bg-opacity:1;background-color:rgb(180 83 9/var(--tw-bg-opacity,1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.hover\:bg-slate-50\/90:hover{background-color:rgba(248,250,252,.9)}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.hover\:text-amber-950:hover{--tw-text-opacity:1;color:rgb(69 26 3/var(--tw-text-opacity,1))}.focus\:border-amber-600:focus{--tw-border-opacity:1;border-color:rgb(217 119 6/var(--tw-border-opacity,1))}.focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-amber-500\/30:focus{--tw-ring-color:rgba(245,158,11,.3)}@media (min-width:640px){.sm\:w-72{width:18rem}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:gap-4{gap:1rem}.sm\:p-8{padding:2rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-sm{font-size:.875rem;line-height:1.25rem}}@media (min-width:1024px){.lg\:w-auto{width:auto}.lg\:flex-row{flex-direction:row}.lg\:items-center{align-items:center}.lg\:py-12{padding-top:3rem;padding-bottom:3rem}}</style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
 
@@ -48,7 +37,6 @@
                     명단 열람하기
                 </button>
             </form>
-            <p class="text-[11px] text-slate-400 mt-4">초기 테스트 비밀번호: 1234</p>
         </div>
     </div>
 
@@ -169,21 +157,16 @@
 
     <script>
         (function() {
-            const ADMIN_PASSWORD = '1234';
-            const STORAGE_KEY = 'visitor_registration_records_v1';
-            const CACHE_KEY = 'admin_dashboard_cache_v1';
             const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec'; 
 
             let allRecords = [];
-            let prefetchPromise = null; // 로그인 화면에서 미리 요청해 두는 프로미스
+            let adminPassword = ''; // 화면이 열려 있는 동안 메모리에만 보관
 
             function initAdmin() {
+                // 이전 버전이 브라우저에 저장해 둔 명단 삭제
+                try { localStorage.removeItem('admin_dashboard_cache_v1'); } catch (e) {}
                 setupLogin();
                 setupControls();
-                // 1. 페이지가 열리자마자(비밀번호 치는 동안) 백그라운드에서 미리 데이터 요청 시작
-                if (GOOGLE_APPS_SCRIPT_URL) {
-                    prefetchPromise = fetchRemoteData();
-                }
             }
 
             if (document.readyState === 'loading') {
@@ -191,72 +174,31 @@
             } else {
                 initAdmin();
             }
-// ... existing code ... -->
-            async function fetchRemoteData() {
-                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, { cache: 'no-store' });
+            // 비밀번호는 서버(Apps Script)에서 확인
+            async function fetchRemoteData(password) {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'list', password }),
+                    cache: 'no-store'
+                });
                 const data = await response.json();
-                if (Array.isArray(data)) {
-                    try {
-                        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-                    } catch (e) {}
-                    return data;
-                }
-                return null;
+                if (data.status !== 'success') throw new Error(data.message || '조회에 실패했습니다.');
+                return data.records;
             }
 
-            async function loadRecords(forceRefresh = false) {
+            async function loadRecords() {
                 const loadingState = document.getElementById('loadingState');
-                const emptyState = document.getElementById('emptyState');
-                const tableWrapper = document.getElementById('tableWrapper');
-
-                if (GOOGLE_APPS_SCRIPT_URL) {
-                    // 2. 캐시된 데이터가 있으면 0.01초 만에 먼저 화면에 즉시 표시
-                    let hasCache = false;
-                    try {
-                        const cachedRaw = localStorage.getItem(CACHE_KEY);
-                        if (cachedRaw) {
-                            const cachedData = JSON.parse(cachedRaw);
-                            if (Array.isArray(cachedData) && cachedData.length > 0) {
-                                allRecords = cachedData;
-                                hasCache = true;
-                                updateStats();
-                                applyFilters();
-                            }
-                        }
-                    } catch (e) {}
-
-                    // 캐시가 없는 첫 접속일 때만 로딩 스피너 표시
-                    if (!hasCache && loadingState) {
-                        emptyState?.classList.add('hidden');
-                        tableWrapper?.classList.add('hidden');
-                        loadingState.classList.remove('hidden');
-                    }
-
-                    try {
-                        // 로그인 전 미리 시작해 둔 요청이 있으면 재사용, 새로고침 버튼 시 새 요청
-                        const data = (!forceRefresh && prefetchPromise)
-                            ? await prefetchPromise
-                            : await fetchRemoteData();
-                        prefetchPromise = null;
-
-                        if (Array.isArray(data)) {
-                            allRecords = data;
-                        }
-                    } catch (err) {
-                        console.error('원격 데이터 조회 오류:', err);
-                        showBanner('서버 데이터를 불러오는 중 오류가 발생했습니다.');
-                    } finally {
-                        loadingState?.classList.add('hidden');
-                    }
-                } else {
-                    try {
-                        const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
-                        allRecords = raw ? JSON.parse(raw) : [];
-                    } catch (e) {
-                        allRecords = [];
-                    }
+                loadingState?.classList.remove('hidden');
+                try {
+                    allRecords = await fetchRemoteData(adminPassword);
+                    showBanner('최신 명단으로 새로고침되었습니다.');
+                } catch (err) {
+                    console.error('원격 데이터 조회 오류:', err);
+                    showBanner('서버 데이터를 불러오는 중 오류가 발생했습니다.');
+                } finally {
+                    loadingState?.classList.add('hidden');
                 }
-
                 updateStats();
                 applyFilters();
             }
@@ -269,18 +211,28 @@
                 const dashboardScreen = document.getElementById('dashboardScreen');
 
                 if (!loginForm) return;
+                const button = loginForm.querySelector('button');
 
-                loginForm.addEventListener('submit', (e) => {
+                loginForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    if (passwordInput.value === ADMIN_PASSWORD) {
-                        errorMsg.classList.add('hidden');
+                    errorMsg.classList.add('hidden');
+                    button.disabled = true;
+                    button.textContent = '확인 중...';
+                    try {
+                        allRecords = await fetchRemoteData(passwordInput.value);
+                        adminPassword = passwordInput.value;
+                        passwordInput.value = '';
                         loginScreen.classList.add('hidden');
                         dashboardScreen.classList.remove('hidden');
-                        passwordInput.value = '';
-                        loadRecords();
-                    } else {
+                        updateStats();
+                        applyFilters();
+                    } catch (err) {
+                        errorMsg.textContent = err instanceof TypeError ? '서버에 연결하지 못했습니다.' : err.message;
                         errorMsg.classList.remove('hidden');
                         passwordInput.focus();
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = '명단 열람하기';
                     }
                 });
             }
@@ -301,8 +253,7 @@
                 }
                 if (refreshBtn) {
                     refreshBtn.addEventListener('click', () => {
-                        loadRecords(true);
-                        showBanner('최신 명단으로 새로고침되었습니다.');
+                        loadRecords();
                     });
                 }
                 if (downloadCsvBtn) {
@@ -310,6 +261,10 @@
                 }
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', () => {
+                        adminPassword = '';
+                        allRecords = [];
+                        document.getElementById('recordsTableBody').innerHTML = '';
+                        document.getElementById('adminBanner').classList.add('hidden');
                         document.getElementById('dashboardScreen').classList.add('hidden');
                         document.getElementById('loginScreen').classList.remove('hidden');
                     });
@@ -329,14 +284,27 @@
                 banner.classList.remove('hidden');
             }
 
+            // 다양한 날짜 형식을 한국 시간 기준 YYYY-MM-DD로 통일
+            // 예: "2026. 11. 26. 오전 9:05:00", "2026-11-25T15:00:00.000Z", "2026/11/26 9:05:00"
+            function toKstDate(val) {
+                if (!val) return '';
+                const str = val instanceof Date ? val.toISOString() : String(val).trim();
+                if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
+                    const d = new Date(str);
+                    return isNaN(d.getTime()) ? '' : new Date(d.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+                }
+                const m = str.match(/^(\d{4})\s*[.\-\/]\s*(\d{1,2})\s*[.\-\/]\s*(\d{1,2})/);
+                return m ? `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}` : '';
+            }
+
             function updateStats() {
                 const totalEl = document.getElementById('totalCount');
                 const todayEl = document.getElementById('todayCount');
                 if (totalEl) totalEl.textContent = allRecords.length;
 
-                const today = new Date();
-                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-                const todayMatches = allRecords.filter(r => String(r.pledgeDate || '').startsWith(todayStr));
+                // '오늘 접수'는 작정일이 아니라 접수일시(submittedAt)를 한국 날짜로 비교
+                const todayStr = toKstDate(new Date());
+                const todayMatches = allRecords.filter(r => toKstDate(r.submittedAt) === todayStr);
                 if (todayEl) todayEl.textContent = todayMatches.length;
             }
 
@@ -450,7 +418,7 @@
                     r.phone || '',
                     r.prayerTopic || '',
                     r.submittedAt || ''
-                ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(','));
+                ].map(val => `"${String(val).replace(/^[=+\-@]/, "'$&").replace(/"/g, '""')}"`).join(','));
 
                 const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
