@@ -38,16 +38,31 @@
         /* 입력창 기본 스타일 */
         .card-input {
             width: 100%;
+            min-width: 0;
             height: 100%;
             background: transparent;
-            padding: 0 0.65rem;
-            font-size: 0.875rem;
+            padding: 0 0.6rem;
+            font-size: 0.84rem;
             color: #1E1B2E;
             outline: none;
         }
+        input[type="date"].card-input {
+            font-size: 0.78rem;
+            padding: 0 0.45rem;
+        }
+        @media (min-width: 640px) {
+            .card-input {
+                padding: 0 0.7rem;
+                font-size: 0.875rem;
+            }
+            input[type="date"].card-input {
+                font-size: 0.82rem;
+                padding: 0 0.55rem;
+            }
+        }
         .card-input::placeholder {
             color: #A195B2;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
         }
         /* 상단 곡선형 딥퍼플 헤더 탭 */
         .section-tab-header {
@@ -119,12 +134,15 @@
             </div>
 
             <!-- 메인 타이틀 + 금빛 월계수 장식 -->
-            <div class="flex items-center justify-center gap-1.5 mt-1">
-                <h1 class="font-serif text-3xl sm:text-4xl lg:text-[42px] font-black text-[#3D1159] tracking-tight drop-shadow-sm">
-                    온라인 태신자 카드
-                </h1>
+            <div class="flex items-start justify-center gap-1 mt-1">
+                <div class="flex flex-col items-center">
+                    <h1 class="font-serif text-[28px] sm:text-4xl lg:text-[42px] font-black text-[#3D1159] tracking-tight leading-tight drop-shadow-sm">
+                        온라인 태신자 카드
+                    </h1>
+                    <span class="text-[11px] sm:text-sm font-bold text-[#531B75] tracking-normal mt-0.5">(Online Pre-believer Card)</span>
+                </div>
                 <!-- 금빛 나뭇잎 SVG -->
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#C99A2E] -mt-2" viewBox="0 0 36 36" fill="currentColor">
+                <svg class="w-6 h-6 sm:w-9 sm:h-9 text-[#C99A2E] mt-0.5 shrink-0" viewBox="0 0 36 36" fill="currentColor">
                     <path d="M6 30C12 24 20 15 30 6C27 14 22 21 13 27L6 30Z" opacity="0.9"/>
                     <path d="M13 22C11 17 13 12 17 9C17 14 16 18 13 22Z"/>
                     <path d="M20 16C19 11 21 7 25 5C25 9 23 13 20 16Z"/>
@@ -133,12 +151,12 @@
             </div>
 
             <!-- 슬로건 -->
-            <div class="flex items-center justify-center gap-3 mt-2.5">
-                <span class="h-[1px] w-8 sm:w-14 bg-gradient-to-r from-transparent to-[#C99A2E]"></span>
-                <p class="text-xs sm:text-sm font-bold text-[#4A2563] tracking-wide">
+            <div class="flex items-center justify-center gap-2 sm:gap-3 mt-2.5">
+                <span class="h-[1px] w-5 sm:w-14 bg-gradient-to-r from-transparent to-[#C99A2E] shrink-0"></span>
+                <p class="text-[11px] sm:text-sm font-bold text-[#4A2563] tracking-tight sm:tracking-wide leading-snug">
                     성령의 바람으로, 다시 타오르는 부흥의 불길
                 </p>
-                <span class="h-[1px] w-8 sm:w-14 bg-gradient-to-l from-transparent to-[#C99A2E]"></span>
+                <span class="h-[1px] w-5 sm:w-14 bg-gradient-to-l from-transparent to-[#C99A2E] shrink-0"></span>
             </div>
         </header>
 
@@ -154,164 +172,184 @@
         </div>
 
         <!-- 메인 폼 컨테이너 (PC: 좌측 교회 제출용 / 가운데 절취선 / 우측 전도자 기도 보관용) -->
-        <form id="registrationForm" novalidate class="relative z-10 px-4 sm:px-7 pb-6">
+        <form id="registrationForm" novalidate class="relative z-10 px-3.5 sm:px-7 pb-6">
             <div class="flex flex-col lg:flex-row items-stretch gap-5 lg:gap-0">
                 
                 <!-- ==========================================
                      [좌측 / 상단] 교회 제출용 카드 영역
                 =========================================== -->
-                <div class="flex-1 lg:pr-5">
-                    <div class="bg-white/95 rounded-[22px] border-[1.5px] border-[#C4A3DB] shadow-md shadow-purple-900/5 overflow-hidden">
+                <div class="flex-1 min-w-0 lg:pr-5">
+                    <div class="bg-white/95 rounded-[22px] border-[1.5px] border-[#C4A3DB] shadow-md shadow-purple-900/5 overflow-hidden h-full">
                         
                         <!-- 곡선형 헤더 바 -->
-                        <div class="bg-[#EFE3F7] flex items-center justify-between pr-3 sm:pr-4">
-                            <div class="section-tab-header px-4 sm:px-5 py-2.5 flex items-center gap-2 text-white shadow-sm">
+                        <div class="bg-[#EFE3F7] flex flex-wrap items-center justify-between gap-1.5 pr-3 sm:pr-4">
+                            <div class="section-tab-header px-4 sm:px-5 py-2.5 flex items-center gap-2 text-white shadow-sm shrink-0">
                                 <!-- 교회 아이콘 SVG -->
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2v3m-1.5-1.5h3M12 5L5 10v11h14V10l-7-5zM9 21v-5a3 3 0 016 0v5"/>
                                 </svg>
                                 <span class="text-base sm:text-lg font-extrabold tracking-tight">교회 제출용</span>
                             </div>
-                            <span class="text-[11px] sm:text-xs font-bold text-[#3D1159]">작성 후 저장 또는 제출해 주세요.</span>
+                            <span class="text-[11px] sm:text-xs font-bold text-[#3D1159] py-1">작성 후 저장 또는 제출해 주세요.</span>
                         </div>
 
                         <!-- 입력 필드 그리드 영역 -->
-                        <div class="p-3.5 sm:p-4 space-y-2.5">
+                        <div class="p-3 sm:p-4 space-y-2.5">
                             
                             <!-- 인도자 섹션 타이틀 -->
                             <div class="flex items-center gap-1.5 pt-0.5">
-                                <span class="w-1.5 h-4 rounded-full bg-[#531B75]"></span>
-                                <h2 class="text-sm font-extrabold text-[#3D1159] tracking-tight">인도자</h2>
+                                <span class="w-1.5 h-4 rounded-full bg-[#531B75] shrink-0"></span>
+                                <h2 class="text-sm font-extrabold text-[#3D1159] tracking-tight">
+                                    인도자 <span class="text-xs font-semibold text-[#6B2791]">(Inviter)</span>
+                                </h2>
                             </div>
 
                             <!-- 1행: 인도자 성명 + 인도자 생년월일 -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- 인도자 성명 -->
-                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                    <label for="evangelistName" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                        <span>인도자</span>
-                                        <span>성명 <span class="text-rose-600">*</span></span>
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                    <label for="evangelistName" class="w-28 sm:w-[104px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1.5 py-1 border-r border-[#D5BBE8]">
+                                        <span class="whitespace-nowrap">인도자 성명 <span class="text-rose-600">*</span></span>
+                                        <span class="text-[9.5px] font-semibold text-[#5E2282] mt-0.5 whitespace-nowrap">(Inviter Name)</span>
                                     </label>
-                                    <input type="text" id="evangelistName" name="evangelistName" required placeholder="성함 입력" class="card-input font-semibold">
+                                    <div class="flex-1 min-w-0 flex items-center">
+                                        <input type="text" id="evangelistName" name="evangelistName" required placeholder="성함 입력" class="card-input font-semibold">
+                                    </div>
                                 </div>
 
                                 <!-- 인도자 생년월일 -->
-                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                    <label for="evangelistBirthDate" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                        <span>인도자</span>
-                                        <span>생년월일 <span class="text-rose-600">*</span></span>
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                    <label for="evangelistBirthDate" class="w-28 sm:w-[108px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1.5 py-1 border-r border-[#D5BBE8]">
+                                        <span class="whitespace-nowrap">인도자 생년월일 <span class="text-rose-600">*</span></span>
+                                        <span class="text-[8.5px] font-semibold text-[#5E2282] mt-0.5 leading-none">(Inviter Date of Birth)</span>
                                     </label>
-                                    <input type="date" id="evangelistBirthDate" name="evangelistBirthDate" required class="card-input text-xs sm:text-sm">
+                                    <div class="flex-1 min-w-0 flex items-center">
+                                        <input type="date" id="evangelistBirthDate" name="evangelistBirthDate" required class="card-input">
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- 2행: 인도자 소속 (대분류 · 중분류 · 소분류 3단계 드롭다운) -->
                             <div class="flex flex-col sm:flex-row items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden">
-                                <label for="evangelistCategory1" class="sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs py-2 sm:py-0 flex items-center justify-center text-center px-1 border-b sm:border-b-0 sm:border-r border-[#D5BBE8]">
-                                    소속 <span class="text-rose-600 ml-0.5">*</span>
+                                <label for="evangelistCategory1" class="sm:w-[104px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight py-1.5 sm:py-1 flex flex-row sm:flex-col items-center justify-center gap-1 sm:gap-0.5 text-center px-1.5 border-b sm:border-b-0 sm:border-r border-[#D5BBE8]">
+                                    <span class="whitespace-nowrap">소속 <span class="text-rose-600">*</span></span>
+                                    <span class="text-[9.5px] font-semibold text-[#5E2282] whitespace-nowrap">(Parish)</span>
                                 </label>
-                                <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#E3D0F0]">
+                                <div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#E3D0F0]">
                                     <select id="evangelistCategory1" name="evangelistCategory1" required
-                                        class="w-full h-10 sm:h-11 px-2.5 text-xs font-semibold text-slate-800 bg-transparent focus:bg-purple-50/40 outline-none cursor-pointer">
+                                        class="w-full min-w-0 h-10 sm:h-12 px-2.5 text-xs font-semibold text-slate-800 bg-transparent focus:bg-purple-50/40 outline-none cursor-pointer">
                                         <option value="">대분류 선택</option>
                                         <option value="대교구">대교구</option>
                                         <option value="지성전">지성전</option>
                                         <option value="준교구">준교구</option>
                                     </select>
                                     <select id="evangelistCategory2" name="evangelistCategory2" required disabled
-                                        class="w-full h-10 sm:h-11 px-2.5 text-xs font-semibold text-slate-800 bg-slate-50/60 disabled:text-slate-400 focus:bg-purple-50/40 outline-none cursor-pointer disabled:cursor-not-allowed">
+                                        class="w-full min-w-0 h-10 sm:h-12 px-2.5 text-xs font-semibold text-slate-800 bg-slate-50/60 disabled:text-slate-400 focus:bg-purple-50/40 outline-none cursor-pointer disabled:cursor-not-allowed">
                                         <option value="">중분류 선택</option>
                                     </select>
                                     <select id="evangelistCategory3" name="evangelistCategory3" required disabled
-                                        class="w-full h-10 sm:h-11 px-2.5 text-xs font-semibold text-slate-800 bg-slate-50/60 disabled:text-slate-400 focus:bg-purple-50/40 outline-none cursor-pointer disabled:cursor-not-allowed">
+                                        class="w-full min-w-0 h-10 sm:h-12 px-2.5 text-xs font-semibold text-slate-800 bg-slate-50/60 disabled:text-slate-400 focus:bg-purple-50/40 outline-none cursor-pointer disabled:cursor-not-allowed">
                                         <option value="">소분류 선택</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- 태신자 섹션 타이틀 -->
-                            <div class="flex items-center gap-1.5 pt-2">
-                                <span class="w-1.5 h-4 rounded-full bg-[#531B75]"></span>
-                                <h2 class="text-sm font-extrabold text-[#3D1159] tracking-tight">태신자</h2>
+                            <!-- 3행: 작정일 (인도자 소속 아래 배치) -->
+                            <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                <label for="pledgeDate" class="w-32 sm:w-[146px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1.5 py-1 border-r border-[#D5BBE8]">
+                                    <span class="whitespace-nowrap">작정일 <span class="text-rose-600">*</span></span>
+                                    <span class="text-[8.5px] font-semibold text-[#5E2282] mt-0.5 leading-none">(Evangelism Commitment Day)</span>
+                                </label>
+                                <div class="flex-1 min-w-0 flex items-center">
+                                    <input type="date" id="pledgeDate" name="pledgeDate" required class="card-input font-medium">
+                                </div>
                             </div>
 
-                            <!-- 3행: 태신자 성명 + 성별(남/여 체크박스 스타일) -->
+                            <!-- 태신자 섹션 타이틀 -->
+                            <div class="flex items-center gap-1.5 pt-2">
+                                <span class="w-1.5 h-4 rounded-full bg-[#531B75] shrink-0"></span>
+                                <h2 class="text-sm font-extrabold text-[#3D1159] tracking-tight">
+                                    태신자 <span class="text-xs font-semibold text-[#6B2791]">(Pre-believer)</span>
+                                </h2>
+                            </div>
+
+                            <!-- 4행: 태신자 이름 + 성별(남/여) -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                <!-- 태신자 성명 -->
-                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                    <label for="visitorName" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                        <span>태신자</span>
-                                        <span>성명 <span class="text-rose-600">*</span></span>
+                                <!-- 태신자 이름 -->
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                    <label for="visitorName" class="w-28 sm:w-[108px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1.5 py-1 border-r border-[#D5BBE8]">
+                                        <span class="whitespace-nowrap">태신자 이름 <span class="text-rose-600">*</span></span>
+                                        <span class="text-[8.5px] font-semibold text-[#5E2282] mt-0.5 leading-none">(Pre-believer Name)</span>
                                     </label>
-                                    <input type="text" id="visitorName" name="visitorName" required placeholder="태신자 성함 입력" class="card-input font-bold text-[#3D1159]">
+                                    <div class="flex-1 min-w-0 flex items-center">
+                                        <input type="text" id="visitorName" name="visitorName" required placeholder="태신자 성함 입력" class="card-input font-bold text-[#3D1159]">
+                                    </div>
                                 </div>
 
                                 <!-- 성별 -->
-                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                    <span class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                        성별 <span class="text-rose-600 ml-0.5">*</span>
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                    <span class="w-24 sm:w-[92px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1.5 py-1 border-r border-[#D5BBE8]">
+                                        <span class="whitespace-nowrap">성별 <span class="text-rose-600">*</span></span>
+                                        <span class="text-[9.5px] font-semibold text-[#5E2282] mt-0.5 whitespace-nowrap">(Gender)</span>
                                     </span>
-                                    <div class="flex-1 flex items-center justify-around px-2">
-                                        <label class="inline-flex items-center gap-1.5 cursor-pointer select-none py-1 px-2 rounded-lg hover:bg-purple-50 transition">
-                                            <input type="radio" name="gender" value="남성" class="w-4 h-4 accent-[#531B75] rounded" required>
+                                    <div class="flex-1 min-w-0 flex items-center justify-around px-2">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer select-none py-1 px-2 rounded-lg hover:bg-purple-50 transition whitespace-nowrap">
+                                            <input type="radio" name="gender" value="남성" class="w-4 h-4 accent-[#531B75] rounded shrink-0" required>
                                             <span class="text-xs sm:text-sm font-bold text-slate-800">남</span>
                                         </label>
-                                        <label class="inline-flex items-center gap-1.5 cursor-pointer select-none py-1 px-2 rounded-lg hover:bg-purple-50 transition">
-                                            <input type="radio" name="gender" value="여성" class="w-4 h-4 accent-[#531B75] rounded">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer select-none py-1 px-2 rounded-lg hover:bg-purple-50 transition whitespace-nowrap">
+                                            <input type="radio" name="gender" value="여성" class="w-4 h-4 accent-[#531B75] rounded shrink-0">
                                             <span class="text-xs sm:text-sm font-bold text-slate-800">여</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 4행: 태신자 생년월일 + 연락처 -->
+                            <!-- 5행: 태신자 생년월일 + 연락처 -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- 태신자 생년월일 -->
-                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                    <label for="birthDate" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs leading-tight flex flex-col items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                        <span>태신자</span>
-                                        <span>생년월일 <span class="text-rose-600">*</span></span>
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                    <label for="birthDate" class="w-28 sm:w-[114px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1 py-1 border-r border-[#D5BBE8]">
+                                        <span class="whitespace-nowrap">태신자 생년월일 <span class="text-rose-600">*</span></span>
+                                        <span class="text-[8px] font-semibold text-[#5E2282] mt-0.5 leading-none">(Pre-believer Date of Birth)</span>
                                     </label>
-                                    <input type="date" id="birthDate" name="birthDate" required class="card-input text-xs sm:text-sm">
+                                    <div class="flex-1 min-w-0 flex items-center">
+                                        <input type="date" id="birthDate" name="birthDate" required class="card-input">
+                                    </div>
                                 </div>
 
                                 <!-- 연락처 -->
-                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                    <label for="phone" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                        연락처 <span class="text-rose-600 ml-0.5">*</span>
+                                <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                    <label for="phone" class="w-28 sm:w-[100px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1 py-1 border-r border-[#D5BBE8]">
+                                        <span class="whitespace-nowrap">연락처 <span class="text-rose-600">*</span></span>
+                                        <span class="text-[8.5px] font-semibold text-[#5E2282] mt-0.5 leading-none">(Mobile Number)</span>
                                     </label>
-                                    <input type="tel" id="phone" name="phone" required maxlength="13" inputmode="numeric" placeholder="010-0000-0000" class="card-input font-medium">
+                                    <div class="flex-1 min-w-0 flex items-center">
+                                        <input type="tel" id="phone" name="phone" required maxlength="13" inputmode="numeric" placeholder="010-0000-0000" class="card-input font-medium">
+                                    </div>
                                 </div>
-                            </div>
-
-                            <!-- 5행: 작정일 -->
-                            <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                <label for="pledgeDate" class="w-20 sm:w-[76px] shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-1 border-r border-[#D5BBE8]">
-                                    작정일 <span class="text-rose-600 ml-0.5">*</span>
-                                </label>
-                                <input type="date" id="pledgeDate" name="pledgeDate" required class="card-input font-medium">
                             </div>
 
                             <!-- 6행: 기도제목 대형 박스 -->
                             <div class="rounded-2xl border border-[#B996D4] bg-white overflow-hidden">
-                                <div class="bg-[#5E2282] text-white text-center font-extrabold text-sm py-1.5 tracking-wider">
-                                    기 도 제 목
+                                <div class="bg-[#5E2282] text-white text-center font-extrabold text-xs sm:text-sm py-1.5 px-2 tracking-wider">
+                                    기 도 제 목 <span class="text-[11px] sm:text-xs font-semibold text-purple-200 tracking-normal">(Prayer Request)</span>
                                 </div>
-                                <textarea id="prayerTopic" name="prayerTopic" rows="3" placeholder="태신자를 위한 기도제목을 자유롭게 적어주세요. (입력 시 오른쪽 '전도자 기도 보관용' 카드에도 자동으로 함께 기재됩니다)"
+                                <textarea id="prayerTopic" name="prayerTopic" rows="3" placeholder="태신자를 위한 기도제목을 자유롭게 적어주세요. (입력 시 오른쪽 '인도자 기도 보관용' 카드에도 자동으로 함께 기재됩니다)"
                                     class="w-full p-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none resize-none leading-relaxed"></textarea>
                             </div>
 
                             <!-- 개인정보 수집 및 이용 동의 -->
                             <div class="rounded-xl bg-[#F8F2FC] border border-[#DFC8F0] px-3 py-2.5">
                                 <div class="flex items-center justify-between gap-2">
-                                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer select-none min-w-0">
                                         <input type="checkbox" id="privacyConsent" name="privacyConsent" required
-                                            class="w-4 h-4 rounded border-purple-300 accent-[#531B75] cursor-pointer">
-                                        <span class="text-xs font-bold text-[#3D1159]">
+                                            class="w-4 h-4 rounded border-purple-300 accent-[#531B75] cursor-pointer shrink-0">
+                                        <span class="text-xs font-bold text-[#3D1159] leading-snug">
                                             [필수] 개인정보 수집 및 이용 동의
                                         </span>
                                     </label>
-                                    <button type="button" id="togglePrivacyBtn" class="text-[11px] font-semibold text-[#6B2791] underline underline-offset-2 hover:text-[#3D1159]">
+                                    <button type="button" id="togglePrivacyBtn" class="text-[11px] font-semibold text-[#6B2791] underline underline-offset-2 hover:text-[#3D1159] shrink-0">
                                         내용보기
                                     </button>
                                 </div>
@@ -346,10 +384,10 @@
                 <!-- ==========================================
                      [우측 / 하단] 인도자 기도 보관용 카드 영역
                 =========================================== -->
-                <div class="w-full lg:w-[360px] shrink-0 lg:pl-5 flex flex-col justify-between">
+                <div class="w-full lg:w-[368px] shrink-0 min-w-0 lg:pl-5 flex flex-col justify-between">
                     
                     <!-- 이미지 캡처 대상 영역 (#keeperCardCapture) -->
-                    <div id="keeperCardCapture" class="bg-white/95 rounded-[22px] border-[1.5px] border-[#C4A3DB] shadow-md shadow-purple-900/5 overflow-hidden">
+                    <div id="keeperCardCapture" class="bg-white/95 rounded-[22px] border-[1.5px] border-[#C4A3DB] shadow-md shadow-purple-900/5 overflow-hidden flex-1 flex flex-col">
                         
                         <!-- 곡선형 헤더 바 -->
                         <div class="bg-[#EFE3F7] flex items-center justify-between pr-3">
@@ -365,23 +403,24 @@
                             <span class="text-[11px] font-bold text-[#3D1159]">이미지 저장 후 계속 기도해 주세요.</span>
                         </div>
 
-                        <div class="p-3.5 sm:p-4 space-y-3">
-                            <!-- 태신자 성명 자동 동기화 표시 -->
-                            <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden h-11">
-                                <span class="w-24 shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-xs flex items-center justify-center text-center px-2 border-r border-[#D5BBE8]">
-                                    태신자 성명
+                        <div class="p-3 sm:p-4 space-y-3 flex-1 flex flex-col">
+                            <!-- 태신자 이름 자동 동기화 표시 -->
+                            <div class="flex items-stretch rounded-xl border border-[#B996D4] bg-white overflow-hidden min-h-[3.25rem]">
+                                <span class="w-28 shrink-0 bg-[#EAD9F5] text-[#3D1159] font-extrabold text-[11px] leading-tight flex flex-col items-center justify-center text-center px-1.5 py-1 border-r border-[#D5BBE8]">
+                                    <span class="whitespace-nowrap">태신자 이름</span>
+                                    <span class="text-[8.5px] font-semibold text-[#5E2282] mt-0.5 leading-none">(Pre-believer Name)</span>
                                 </span>
-                                <div id="mirrorVisitorName" class="flex-1 px-3 flex items-center text-sm font-extrabold text-[#3D1159]">
+                                <div id="mirrorVisitorName" class="flex-1 min-w-0 px-3 flex items-center text-sm font-extrabold text-[#3D1159] break-all">
                                     <span class="text-slate-400 font-normal text-xs">작성 시 자동 입력됩니다</span>
                                 </div>
                             </div>
 
                             <!-- 기도제목 자동 동기화 박스 -->
-                            <div class="rounded-2xl border border-[#B996D4] bg-white overflow-hidden">
-                                <div class="bg-[#5E2282] text-white text-center font-extrabold text-sm py-1.5 tracking-wider">
-                                    기 도 제 목
+                            <div class="rounded-2xl border border-[#B996D4] bg-white overflow-hidden flex-1 flex flex-col">
+                                <div class="bg-[#5E2282] text-white text-center font-extrabold text-xs sm:text-sm py-1.5 px-2 tracking-wider">
+                                    기 도 제 목 <span class="text-[11px] sm:text-xs font-semibold text-purple-200 tracking-normal">(Prayer Request)</span>
                                 </div>
-                                <div id="mirrorPrayerTopic" class="p-3.5 min-h-[140px] lg:min-h-[215px] text-xs sm:text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                                <div id="mirrorPrayerTopic" class="p-3.5 flex-1 min-h-[160px] lg:min-h-[245px] text-xs sm:text-sm text-slate-800 whitespace-pre-wrap break-words leading-relaxed">
                                     <span class="text-slate-400 text-xs">왼쪽 기도제목을 입력하시면 기도 보관용 카드에도 함께 표시됩니다.</span>
                                 </div>
                             </div>
@@ -541,7 +580,7 @@
                     subCategories: ['교회학교', '대학청장년국'],
                     getLeafOptions: function(subVal) {
                         if (subVal === '교회학교') {
-                            return ['영아부', '유아부', '유치부', '초등1,2,3부', '초등4,5,6부', '중등1부', '중등2부', '중등3부', '고등1부', '고등2부', '고등3부'];
+                            return ['유아부', '영아부', '유치부', '초등1,2,3부', '초등4,5,6부', '중등1부', '중등2부', '중등3부', '고등1부', '고등2부', '고등3부'];
                         }
                         if (subVal === '대학청장년국') {
                             return ['비전브릿지선교회', '프뉴마선교회', '가스펠선교회', '카리스선교회', '그레이스선교회'];
