@@ -81,15 +81,40 @@
 
         <!-- 상단 타이틀 영역 -->
         <header class="relative z-10 pt-6 sm:pt-8 pb-4 px-5 text-center">
-            <!-- 교회 로고 및 명칭 -->
-            <div class="inline-flex items-center justify-center gap-2 mb-1.5">
-                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#D32F2F]" viewBox="0 0 36 36" fill="none">
-                    <circle cx="18" cy="18" r="15.5" stroke="currentColor" stroke-width="2.4"/>
-                    <path d="M18 3V33M12 7V29M24 7V29M4 16H32M6 22H30" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <div class="text-left leading-none">
-                    <div class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">여의도순복음교회</div>
-                    <div class="text-[8px] sm:text-[9px] font-bold tracking-[0.14em] text-slate-600 mt-0.5">YOIDO FULL GOSPEL CHURCH</div>
+            <!-- 여의도순복음교회 공식 로고 이미지 (같은 폴더에 로고 이미지 파일을 두시면 바로 표시됩니다) -->
+            <div class="inline-flex items-center justify-center mb-2.5">
+                <img src="2023.01.09_여의도순복음교회_로고.ai-removebg-preview.png"
+                     alt="기독교대한하나님의성회 여의도순복음교회"
+                     class="h-11 sm:h-14 w-auto object-contain mx-auto"
+                     onerror="this.style.display='none'; document.getElementById('fallbackChurchLogo').classList.remove('hidden');">
+
+                <!-- 이미지 파일 경로가 다를 경우 자동 대체 표시되는 백업 로고 -->
+                <div id="fallbackChurchLogo" class="hidden inline-flex items-center justify-center gap-2.5 sm:gap-3">
+                    <svg class="w-8 h-12 sm:w-9 sm:h-14 shrink-0" viewBox="0 0 68 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="34" cy="52" rx="30" ry="48" fill="#E31B23"/>
+                        <rect x="30.5" y="4" width="7" height="96" fill="#FFFFFF"/>
+                        <rect x="4" y="45" width="60" height="7" fill="#FFFFFF"/>
+                        <path d="M18 28L23 11H27L22 28H18Z" fill="#FFFFFF"/>
+                        <path d="M50 28L45 11H41L46 28H50Z" fill="#FFFFFF"/>
+                        <path d="M12 38L18 16H21L15 38H12Z" fill="#FFFFFF"/>
+                        <path d="M56 38L50 16H47L53 38H56Z" fill="#FFFFFF"/>
+                        <rect x="21" y="59" width="4" height="33" fill="#FFFFFF"/>
+                        <rect x="43" y="59" width="4" height="33" fill="#FFFFFF"/>
+                        <rect x="13" y="59" width="3.5" height="24" fill="#FFFFFF"/>
+                        <rect x="51.5" y="59" width="3.5" height="24" fill="#FFFFFF"/>
+                        <ellipse cx="34" cy="52" rx="30" ry="48" stroke="#E31B23" stroke-width="2.5"/>
+                    </svg>
+                    <div class="text-left flex flex-col justify-center">
+                        <div class="text-[10px] sm:text-[11px] font-extrabold tracking-[-0.03em] text-[#1A1A1A] leading-none mb-0.5">
+                            기독교대한하나님의성회
+                        </div>
+                        <div class="text-[23px] sm:text-[28px] font-black tracking-[-0.04em] text-[#007BC3] leading-none">
+                            여의도순복음교회
+                        </div>
+                        <div class="text-[8.5px] sm:text-[10px] font-extrabold tracking-[0.07em] text-[#1A1A1A] mt-1 leading-none">
+                            YOIDO FULL GOSPEL CHURCH
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -472,7 +497,7 @@
         (function() {
             const STORAGE_KEY = 'visitor_registration_records_v1';
             // 구글 스프레드시트(Apps Script) 웹 앱 URL을 아래 작은따옴표 안에 붙여넣으세요.
-            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZolNgs64OnDDN8jDOhz6oUtp5AXn3CBoGTmuaGXNoO-adpAxkE-Qqc84k0RKrxC-TvA/exec';
+            const GOOGLE_APPS_SCRIPT_URL = '';
 
             // 소속 3단계 계층 데이터 정의
             const GROUP_HIERARCHY = {
